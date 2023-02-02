@@ -14,6 +14,9 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
             Text("Hello, world!")
+            Button("START SDK DEMO") {
+                SDKDemo()
+            }
         }
         .padding()
     }
@@ -23,4 +26,9 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+
+func SDKDemo () {
+    print("SDKDemo START")
+    print("SDKDemo END")
 }
