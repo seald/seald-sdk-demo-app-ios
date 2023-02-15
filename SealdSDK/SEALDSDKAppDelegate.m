@@ -10,9 +10,6 @@
 #import <SealdSdk/SealdSdk.h>
 #import <JWT/JWT.h>
 
-#import "Foundation/Foundation.h"
-#import <FileProvider/FileProvider.h>
-
 @implementation SEALDSDKAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -23,6 +20,7 @@
     NSString *apiURL = @"https://api-dev.soyouz.seald.io/";
     NSString *appId = @"00000000-0000-1000-a000-7ea300000018";
     
+    // Find database Path
     NSArray *paths = NSSearchPathForDirectoriesInDomains
                 (NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -75,12 +73,8 @@
     }
     NSLog(@"user1AccountInfo.userId %@", user1AccountInfo.userId);
     
-    
     Mobile_sdkStringArray *members = [[Mobile_sdkStringArray alloc] init];
     members = [members add:user1AccountInfo.userId];
-    NSLog(@"members size %ld", [members size]);
-    NSLog(@"members size %ld", [members size]);
-    NSLog(@"members size %ld", [members size]);
     NSString *groupInfo = [sdkInstance createGroup:@"amzingGroupName" members:members admins:members error:&error];
     if (error != nil)
     {
