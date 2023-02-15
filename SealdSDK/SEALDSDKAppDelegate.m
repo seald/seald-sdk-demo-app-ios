@@ -10,10 +10,14 @@
 #import <SealdSdk/SealdSdk.h>
 #import <JWT/JWT.h>
 
+#import "Foundation/Foundation.h"
+#import <FileProvider/FileProvider.h>
+
 @implementation SEALDSDKAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSLog(@"SDK DEMO START");
     
     NSString *databaseEncryptionKeyB64 = @"V4olGDOE5bAWNa9HDCvOACvZ59hUSUdKmpuZNyl1eJQnWKs5/l+PGnKUv4mKjivL3BtU014uRAIF2sOl83o6vQ";
     NSString *apiURL = @"https://api-dev.soyouz.seald.io/";
@@ -22,15 +26,20 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains
                 (NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *sealdDir = [NSString stringWithFormat:@"%@/seald", documentsDirectory];
+    
+    NSLog(@"Removing existing database...");
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager removeItemAtPath:sealdDir error:NULL]) {
+       NSLog(@"Seald Database removed successfully");
+    }
 
-    // Override point for customization after application launch.
-    NSLog(@"SDK DEMO START");
     NSError *error = nil;
     Mobile_sdkInitializeOptions *initOpts = [[Mobile_sdkInitializeOptions alloc] init];
     initOpts.appId = appId;
     initOpts.apiURL = apiURL;
     initOpts.databaseEncryptionKeyB64 = databaseEncryptionKeyB64;
-    initOpts.dbPath = [NSString stringWithFormat:@"%@/seald/inst1", documentsDirectory];
+    initOpts.dbPath = [NSString stringWithFormat:@"%@/inst1", sealdDir];
     initOpts.instanceName = @"inst1";
     NSLog(@"initOpts.appId  %@", initOpts.appId);
     Mobile_sdkMobileSDK *sdkInstance = Mobile_sdkInitialize(initOpts, &error);
@@ -53,20 +62,49 @@
                               @"exp" : [NSNumber numberWithDouble:exp.timeIntervalSince1970],
                               @"join_team": @YES,
                               @"scopes":@"-1"};
-    
     NSString *token = [JWT encodePayload:payload].headers(headers).secret(JWTSharedSecret).algorithm(algorithm).encode;
-    NSLog(@"JWT token %@", token);
-    
-    
+
     Common_modelsCreateAccountOptions *createAccountOpts = [[Common_modelsCreateAccountOptions alloc] init];
     createAccountOpts.displayName = @"MyName";
     createAccountOpts.signupJWT = token;
     createAccountOpts.deviceName = @"MyDeviceName";
-    [sdkInstance createAccount:createAccountOpts error:&error];
+    Common_modelsAccountInfo *user1AccountInfo = [sdkInstance createAccount:createAccountOpts error:&error];
     if (error != nil)
     {
         NSLog(@"createAccount ERROR %@", error.userInfo);
     }
+    NSLog(@"user1AccountInfo.userId %@", user1AccountInfo.userId);
+    
+    
+    Mobile_sdkStringArray *members = [[Mobile_sdkStringArray alloc] init];
+    members = [members add:user1AccountInfo.userId];
+    NSLog(@"members size %ld", [members size]);
+    NSLog(@"members size %ld", [members size]);
+    NSLog(@"members size %ld", [members size]);
+    NSString *groupInfo = [sdkInstance createGroup:@"amzingGroupName" members:members admins:members error:&error];
+    if (error != nil)
+    {
+        NSLog(@"createGroup ERROR %@", error.userInfo);
+    }
+    
+    Mobile_sdkMobileEncryptionSession *es1SDK1 = [sdkInstance createEncryptionSession:members useCache:@YES error:&error];
+    if (error != nil)
+    {
+        NSLog(@"createEncryptionSession ERROR %@", error.userInfo);
+    }
+    
+    NSString *encryptedMessage = [es1SDK1 encryptMessage:@"coucou" error:&error];
+    if (error != nil)
+    {
+        NSLog(@"encryptMessage ERROR %@", error.userInfo);
+    }
+    NSLog(@"encryptedMessage %@", encryptedMessage);
+    NSString *decryptedMessage = [es1SDK1 decryptMessage:encryptedMessage error:&error];
+    if (error != nil)
+    {
+        NSLog(@"decryptMessage ERROR %@", error.userInfo);
+    }
+    NSLog(@"decryptMessage %@", decryptedMessage);
     
     NSLog(@"SDK DEMO END");
     return YES;
