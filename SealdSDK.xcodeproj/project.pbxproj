@@ -23,6 +23,7 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		91EC02DE29A6788700432BCB /* SealdSdkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */; };
 		FE8229401B9A3784E1121A52 /* Pods_SealdSDK_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,7 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		31F40D85F44EAB624FE2FA4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		31F40D85F44EAB624FE2FA4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		3225AF710728F105EB6F6173 /* Pods_SealdSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		399C28233C2B6AAD178C84D7 /* Pods-SealdSDK_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.release.xcconfig"; sourceTree = "<group>"; };
 		51D4939D1A9AFDC81C849E8B /* Pods-SealdSDK_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Tests.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -63,10 +64,12 @@
 		6572EEEF3EE7EDF6BF2C1A06 /* Pods-SealdSDK_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Tests.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		7BCF0A0DFAE5DF79EF4AF4CD /* SealdSDK.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = SealdSDK.podspec; path = ../SealdSDK.podspec; sourceTree = "<group>"; };
+		7BCF0A0DFAE5DF79EF4AF4CD /* SealdSDK.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = SealdSDK.podspec; path = ../SealdSDK.podspec; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SealdSdkWrapper.m; sourceTree = "<group>"; };
+		91EC02DF29A67AD000432BCB /* SealdSdkWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SealdSdkWrapper.h; sourceTree = "<group>"; };
 		D2D0D203E91566F8B7DBC5D1 /* Pods-SealdSDK_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,7 +106,6 @@
 				6572EEEF3EE7EDF6BF2C1A06 /* Pods-SealdSDK_Tests.debug.xcconfig */,
 				51D4939D1A9AFDC81C849E8B /* Pods-SealdSDK_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -152,6 +154,8 @@
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */,
+				91EC02DF29A67AD000432BCB /* SealdSdkWrapper.h */,
 			);
 			name = "Example for SealdSDK";
 			path = SealdSDK;
@@ -247,7 +251,7 @@
 			attributes = {
 				CLASSPREFIX = SEALDSDK;
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = clement;
+				ORGANIZATIONNAME = "Seald SAS";
 				TargetAttributes = {
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -259,6 +263,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -387,6 +392,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91EC02DE29A6788700432BCB /* SealdSdkWrapper.m in Sources */,
 				6003F59E195388D20070C39A /* SEALDSDKAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* SEALDSDKViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,

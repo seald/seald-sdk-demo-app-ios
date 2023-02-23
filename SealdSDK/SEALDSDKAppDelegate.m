@@ -3,11 +3,12 @@
 //  SealdSDK
 //
 //  Created by clement on 02/13/2023.
-//  Copyright (c) 2023 clement. All rights reserved.
+//  Copyright (c) 2023 Seald SAS. All rights reserved.
 //
 
 #import "SEALDSDKAppDelegate.h"
 #import <SealdSdk/SealdSdk.h>
+#import "SealdSdkWrapper.h"
 #import <JWT/JWT.h>
 
 @implementation SEALDSDKAppDelegate
@@ -28,19 +29,14 @@
     
     NSLog(@"Removing existing database...");
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager removeItemAtPath:sealdDir error:NULL]) {
+    NSError *error = nil;
+    if ([fileManager removeItemAtPath:sealdDir error:&error]) {
        NSLog(@"Seald Database removed successfully");
+    } else {
+        NSLog(@"Error removing Seald database %@", error.userInfo);
     }
 
-    NSError *error = nil;
-    Mobile_sdkInitializeOptions *initOpts = [[Mobile_sdkInitializeOptions alloc] init];
-    initOpts.appId = appId;
-    initOpts.apiURL = apiURL;
-    initOpts.databaseEncryptionKeyB64 = databaseEncryptionKeyB64;
-    initOpts.dbPath = [NSString stringWithFormat:@"%@/inst1", sealdDir];
-    initOpts.instanceName = @"inst1";
-    NSLog(@"initOpts.appId  %@", initOpts.appId);
-    Mobile_sdkMobileSDK *sdkInstance = Mobile_sdkInitialize(initOpts, &error);
+    SealdSdk *sdkWrapper = [[SealdSdk alloc] initWithApiUrl:apiURL appId:appId dbPath:[NSString stringWithFormat:@"%@/inst1", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"inst1" logLevel:0 encryptionSessionCacheTTL:0 keySize:4096 error:&error];
     if (error != nil)
     {
         NSLog(@"Mobile_sdkInitialize ERROR %@", error.userInfo);
@@ -61,27 +57,24 @@
                               @"join_team": @YES,
                               @"scopes":@"-1"};
     NSString *token = [JWT encodePayload:payload].headers(headers).secret(JWTSharedSecret).algorithm(algorithm).encode;
-
-    Common_modelsCreateAccountOptions *createAccountOpts = [[Common_modelsCreateAccountOptions alloc] init];
-    createAccountOpts.displayName = @"MyName";
-    createAccountOpts.signupJWT = token;
-    createAccountOpts.deviceName = @"MyDeviceName";
-    Common_modelsAccountInfo *user1AccountInfo = [sdkInstance createAccount:createAccountOpts error:&error];
+    NSLog(@"JWT %@", token);
+    
+    NSString *userId = [sdkWrapper createAccount:token deviceName:@"MyDeviceName" displayName:@"MyName" error:&error];
     if (error != nil)
     {
         NSLog(@"createAccount ERROR %@", error.userInfo);
     }
-    NSLog(@"user1AccountInfo.userId %@", user1AccountInfo.userId);
+    NSLog(@"userId %@", userId);
     
-    Mobile_sdkStringArray *members = [[Mobile_sdkStringArray alloc] init];
-    members = [members add:user1AccountInfo.userId];
-    NSString *groupInfo = [sdkInstance createGroup:@"amzingGroupName" members:members admins:members error:&error];
+    NSArray* members = [NSArray arrayWithObject:userId];
+    NSString* groupId = [sdkWrapper createGroup:@"amzingGroupName" members:members admins:members error:&error];
     if (error != nil)
     {
         NSLog(@"createGroup ERROR %@", error.userInfo);
     }
-    
-    Mobile_sdkMobileEncryptionSession *es1SDK1 = [sdkInstance createEncryptionSession:members useCache:@YES error:&error];
+    NSLog(@"groupId %@", groupId);
+
+    EncryptionSession *es1SDK1 = [sdkWrapper createEncryptionSession:members useCache:@YES error:&error];
     if (error != nil)
     {
         NSLog(@"createEncryptionSession ERROR %@", error.userInfo);
@@ -93,6 +86,7 @@
         NSLog(@"encryptMessage ERROR %@", error.userInfo);
     }
     NSLog(@"encryptedMessage %@", encryptedMessage);
+
     NSString *decryptedMessage = [es1SDK1 decryptMessage:encryptedMessage error:&error];
     if (error != nil)
     {
