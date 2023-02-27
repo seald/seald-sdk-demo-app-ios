@@ -23,7 +23,6 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
-		91EC02DE29A6788700432BCB /* SealdSdkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */; };
 		FE8229401B9A3784E1121A52 /* Pods_SealdSDK_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -66,10 +65,9 @@
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7BCF0A0DFAE5DF79EF4AF4CD /* SealdSDK.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = SealdSDK.podspec; path = ../SealdSDK.podspec; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SealdSdkWrapper.m; sourceTree = "<group>"; };
-		91EC02DF29A67AD000432BCB /* SealdSdkWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SealdSdkWrapper.h; sourceTree = "<group>"; };
+		914B6DE029ACCDA700B9FDE9 /* SealdSdkInternals.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SealdSdkInternals.xcframework; path = Pods/SealdSdk/SealdSdkInternals.xcframework; sourceTree = "<group>"; };
 		D2D0D203E91566F8B7DBC5D1 /* Pods-SealdSDK_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +131,7 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				914B6DE029ACCDA700B9FDE9 /* SealdSdkInternals.xcframework */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
@@ -154,8 +153,6 @@
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
-				91EC02DD29A6788700432BCB /* SealdSdkWrapper.m */,
-				91EC02DF29A67AD000432BCB /* SealdSdkWrapper.h */,
 			);
 			name = "Example for SealdSDK";
 			path = SealdSDK;
@@ -310,11 +307,13 @@
 				"${PODS_ROOT}/Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Base64/Base64.framework",
 				"${BUILT_PRODUCTS_DIR}/JWT/JWT.framework",
+				"${BUILT_PRODUCTS_DIR}/SealdSdk/SealdSdk.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Base64.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWT.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SealdSdk.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -392,7 +391,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91EC02DE29A6788700432BCB /* SealdSdkWrapper.m in Sources */,
 				6003F59E195388D20070C39A /* SEALDSDKAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* SEALDSDKViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,

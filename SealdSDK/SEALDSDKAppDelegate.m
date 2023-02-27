@@ -8,7 +8,6 @@
 
 #import "SEALDSDKAppDelegate.h"
 #import <SealdSdk/SealdSdk.h>
-#import "SealdSdkWrapper.h"
 #import <JWT/JWT.h>
 
 @implementation SEALDSDKAppDelegate

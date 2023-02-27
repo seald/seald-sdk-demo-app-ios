@@ -9,7 +9,7 @@
 #ifndef SealdSdkWrapper_h
 #define SealdSdkWrapper_h
 
-#import <SealdSdk/SealdSdk.h>
+#import <SealdSdkInternals/SealdSdkInternals.h>
 
 /**
  ClearFile represents a decrypted file.
@@ -31,11 +31,11 @@
  * @property sessionId the ID of this encryptionSession. Read-only.
  */
 @interface EncryptionSession : NSObject{
-    Mobile_sdkMobileEncryptionSession* encryptionSession;
+    SealdSdkInternalsMobile_sdkMobileEncryptionSession* encryptionSession;
 }
 /** the ID of this encryptionSession. Read-only. */
 @property (nonatomic, readonly) NSString* sessionId;
-- (instancetype) initWithEncryptionSession:(Mobile_sdkMobileEncryptionSession*)es;
+- (instancetype) initWithEncryptionSession:(SealdSdkInternalsMobile_sdkMobileEncryptionSession*)es;
 /**
  * Encrypt a clear-text string into an encrypted message, for the recipients of this session.
  * @param clearMessage The message to encrypt.
@@ -76,7 +76,7 @@
  This is the main class for the Seald SDK. It represents an instance of the Seald SDK.
  */
 @interface SealdSdk : NSObject{
-    Mobile_sdkMobileSDK *sdkInstance;
+    SealdSdkInternalsMobile_sdkMobileSDK *sdkInstance;
 }
 /**
  Initialize this Seald SDK Instance.

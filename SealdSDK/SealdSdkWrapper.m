@@ -6,10 +6,10 @@
 //  Copyright © 2023 Seald SAS. All rights reserved.
 //
 
-#import "SealdSdkWrapper.h"
+#import "SealdSdk/SealdSdk.h"
 
-Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
-    Mobile_sdkStringArray* resultArray = [[Mobile_sdkStringArray alloc] init];
+SealdSdkInternalsMobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
+    SealdSdkInternalsMobile_sdkStringArray* resultArray = [[SealdSdkInternalsMobile_sdkStringArray alloc] init];
     
     for (NSString* string in stringArray) {
         [resultArray add:string];
@@ -31,7 +31,7 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
 @end
 
 @implementation EncryptionSession
-- (instancetype) initWithEncryptionSession:(Mobile_sdkMobileEncryptionSession*)es {
+- (instancetype) initWithEncryptionSession:(SealdSdkInternalsMobile_sdkMobileEncryptionSession*)es {
     self = [super init];
     if (self) {
         encryptionSession = es;
@@ -75,8 +75,8 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
 - (ClearFile *)decryptFile:(NSData*)encryptedFile
                      error:(NSError**)error
 {
-    Common_modelsClearFile* clearFile = [encryptionSession decryptFile:encryptedFile error:error];
-    return [[ClearFile alloc] initWithFilename:clearFile.filename messageId:clearFile.messageId fileContent:clearFile.fileContent];
+    SealdSdkInternalsMobile_sdkClearFile* clearFile = [encryptionSession decryptFile:encryptedFile error:error];
+    return [[ClearFile alloc] initWithFilename:clearFile.filename messageId:clearFile.sessionId fileContent:clearFile.fileContent];
 }
 @end
 
@@ -97,14 +97,14 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
     }
     self = [super init];
     if (self) {
-        Mobile_sdkInitializeOptions *initOpts = [[Mobile_sdkInitializeOptions alloc] init];
+        SealdSdkInternalsMobile_sdkInitializeOptions *initOpts = [[SealdSdkInternalsMobile_sdkInitializeOptions alloc] init];
         initOpts.appId = appId;
         initOpts.apiURL = apiUrl;
         initOpts.databaseEncryptionKeyB64 = dbb64SymKey;
         initOpts.dbPath = dbPath;
         initOpts.instanceName = instanceName;
         
-        sdkInstance = Mobile_sdkInitialize(initOpts, error);
+        sdkInstance = SealdSdkInternalsMobile_sdkInitialize(initOpts, error);
         if (*error != nil)
         {
             return nil;
@@ -119,12 +119,12 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
                      error:(NSError**)error
 {
     // TODO: throw if not initialized
-    Common_modelsCreateAccountOptions *createAccountOpts = [[Common_modelsCreateAccountOptions alloc] init];
+    SealdSdkInternalsMobile_sdkCreateAccountOptions *createAccountOpts = [[SealdSdkInternalsMobile_sdkCreateAccountOptions alloc] init];
     createAccountOpts.signupJWT = signupJwt;
     createAccountOpts.deviceName = deviceName;
     createAccountOpts.displayName = displayName;
     
-    Common_modelsAccountInfo *user1AccountInfo = [sdkInstance createAccount:createAccountOpts error:error];
+    SealdSdkInternalsMobile_sdkAccountInfo *user1AccountInfo = [sdkInstance createAccount:createAccountOpts error:error];
     if (*error != nil)
     {
         return nil;
@@ -180,7 +180,7 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
                                          error:(NSError**)error
 {
     NSError *createError = nil;
-    Mobile_sdkMobileEncryptionSession *es = [sdkInstance createEncryptionSession:arrayToStringArray(recipients) useCache:useCache error:&createError];
+    SealdSdkInternalsMobile_sdkMobileEncryptionSession *es = [sdkInstance createEncryptionSession:arrayToStringArray(recipients) useCache:useCache error:&createError];
     if (createError) {
         *error = createError;
         return nil;
@@ -192,7 +192,7 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
                                            error:(NSError**)error
 {
     NSError *retrieveError = nil;
-    Mobile_sdkMobileEncryptionSession *es = [sdkInstance retrieveEncryptionSession:sessionId useCache:useCache error:&retrieveError];
+    SealdSdkInternalsMobile_sdkMobileEncryptionSession *es = [sdkInstance retrieveEncryptionSession:sessionId useCache:useCache error:&retrieveError];
     if (retrieveError) {
         *error = retrieveError;
         return nil;
@@ -204,7 +204,7 @@ Mobile_sdkStringArray* arrayToStringArray(NSArray<NSString*>* stringArray) {
                                                       error:(NSError**)error
 {
     NSError *retrieveError = nil;
-    Mobile_sdkMobileEncryptionSession *es = [sdkInstance retrieveEncryptionSessionFromMessage:message useCache:useCache error:&retrieveError];
+    SealdSdkInternalsMobile_sdkMobileEncryptionSession *es = [sdkInstance retrieveEncryptionSessionFromMessage:message useCache:useCache error:&retrieveError];
     if (retrieveError) {
         *error = retrieveError;
         return nil;
