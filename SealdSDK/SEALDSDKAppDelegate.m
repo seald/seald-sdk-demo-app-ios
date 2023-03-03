@@ -33,12 +33,14 @@
        NSLog(@"Seald Database removed successfully");
     } else {
         NSLog(@"Error removing Seald database %@", error.userInfo);
+        return YES;
     }
 
     SealdSdk *sdkWrapper = [[SealdSdk alloc] initWithApiUrl:apiURL appId:appId dbPath:[NSString stringWithFormat:@"%@/inst1", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"inst1" logLevel:0 encryptionSessionCacheTTL:0 keySize:4096 error:&error];
     if (error != nil)
     {
         NSLog(@"Mobile_sdkInitialize ERROR %@", error.userInfo);
+        return YES;
     }
     
     // GO JWT
@@ -58,18 +60,21 @@
     NSString *token = [JWT encodePayload:payload].headers(headers).secret(JWTSharedSecret).algorithm(algorithm).encode;
     NSLog(@"JWT %@", token);
     
-    NSString *userId = [sdkWrapper createAccount:token deviceName:@"MyDeviceName" displayName:@"MyName" error:&error];
+    NSString *userId = [sdkWrapper createAccount:token deviceName:@"MyDeviceName" displayName:@"MyName" expireAfter:0 error:&error];
     if (error != nil)
     {
         NSLog(@"createAccount ERROR %@", error.userInfo);
+        return YES;
     }
     NSLog(@"userId %@", userId);
     
     NSArray* members = [NSArray arrayWithObject:userId];
-    NSString* groupId = [sdkWrapper createGroup:@"amzingGroupName" members:members admins:members error:&error];
+    NSArray* admins = [NSArray arrayWithObject:userId];
+    NSString* groupId = [sdkWrapper createGroup:@"amzingGroupName" members:members admins:admins error:&error];
     if (error != nil)
     {
         NSLog(@"createGroup ERROR %@", error.userInfo);
+        return YES;
     }
     NSLog(@"groupId %@", groupId);
 
@@ -77,12 +82,14 @@
     if (error != nil)
     {
         NSLog(@"createEncryptionSession ERROR %@", error.userInfo);
+        return YES;
     }
     
     NSString *encryptedMessage = [es1SDK1 encryptMessage:@"coucou" error:&error];
     if (error != nil)
     {
         NSLog(@"encryptMessage ERROR %@", error.userInfo);
+        return YES;
     }
     NSLog(@"encryptedMessage %@", encryptedMessage);
 
@@ -90,6 +97,7 @@
     if (error != nil)
     {
         NSLog(@"decryptMessage ERROR %@", error.userInfo);
+        return YES;
     }
     NSLog(@"decryptMessage %@", decryptedMessage);
     
