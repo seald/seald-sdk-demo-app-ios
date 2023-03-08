@@ -3,7 +3,7 @@ PODS:
   - Expecta (1.0.6)
   - JWT (3.0.0-beta.3):
     - Base64 (~> 1.1.2)
-  - SealdSdk (0.1.0-beta.49087)
+  - SealdSdk (0.1.0-beta.49169)
   - Specta (2.0.0)
 
 DEPENDENCIES:
@@ -27,9 +27,9 @@ SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   JWT: a2e44b0d2273e28ae68cec30e95d3d460c76c298
-  SealdSdk: 631f49369216d7525c0a2e8a7ecb34e8c800eb9d
+  SealdSdk: d83f6cf48cf886397f27b37f280d25e68b51b140
   Specta: b79d84043684b35ffdc2680df578dc318ec2efc2
 
-PODFILE CHECKSUM: 30f21520745d4ce74ce0b032b94912164d4e7bb1
+PODFILE CHECKSUM: f9abbed63d5a419422d9e45ca23a4e03ac4a46c2
 
 COCOAPODS: 1.11.3

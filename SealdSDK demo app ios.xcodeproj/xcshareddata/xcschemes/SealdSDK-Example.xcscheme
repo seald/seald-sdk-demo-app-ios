@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6003F589195388D20070C39A"
                BuildableName = "SealdSDK_Example.app"
-               BlueprintName = "SealdSDK_Example"
-               ReferencedContainer = "container:SealdSDK.xcodeproj">
+               BlueprintName = "SealdSDK demo app ios_Example"
+               ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,8 +32,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
             BuildableName = "SealdSDK_Example.app"
-            BlueprintName = "SealdSDK_Example"
-            ReferencedContainer = "container:SealdSDK.xcodeproj">
+            BlueprintName = "SealdSDK demo app ios_Example"
+            ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -43,8 +43,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6003F5AD195388D20070C39A"
                BuildableName = "SealdSDK_Tests.xctest"
-               BlueprintName = "SealdSDK_Tests"
-               ReferencedContainer = "container:SealdSDK.xcodeproj">
+               BlueprintName = "SealdSDK demo app ios_Tests"
+               ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,8 +65,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
             BuildableName = "SealdSDK_Example.app"
-            BlueprintName = "SealdSDK_Example"
-            ReferencedContainer = "container:SealdSDK.xcodeproj">
+            BlueprintName = "SealdSDK demo app ios_Example"
+            ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,8 +82,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
             BuildableName = "SealdSDK_Example.app"
-            BlueprintName = "SealdSDK_Example"
-            ReferencedContainer = "container:SealdSDK.xcodeproj">
+            BlueprintName = "SealdSDK demo app ios_Example"
+            ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

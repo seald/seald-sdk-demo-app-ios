@@ -57,19 +57,19 @@
                               @"exp" : [NSNumber numberWithDouble:exp.timeIntervalSince1970],
                               @"join_team": @YES,
                               @"scopes":@"-1"};
-    NSString *token = [JWT encodePayload:payload].headers(headers).secret(JWTSharedSecret).algorithm(algorithm).encode;
+    NSString* token = [JWT encodePayload:payload].headers(headers).secret(JWTSharedSecret).algorithm(algorithm).encode;
     NSLog(@"JWT %@", token);
     
-    NSString *userId = [sdkWrapper createAccount:token deviceName:@"MyDeviceName" displayName:@"MyName" expireAfter:0 error:&error];
+    SealdAccountInfo* accountInfo = [sdkWrapper createAccount:token deviceName:@"MyDeviceName" displayName:@"MyName" expireAfter:0 error:&error];
     if (error != nil)
     {
         NSLog(@"createAccount ERROR %@", error.userInfo);
         return YES;
     }
-    NSLog(@"userId %@", userId);
+    NSLog(@"userId %@", accountInfo.userId);
     
-    NSArray* members = [NSArray arrayWithObject:userId];
-    NSArray* admins = [NSArray arrayWithObject:userId];
+    NSArray<NSString*>* members = [NSArray arrayWithObject:accountInfo.userId];
+    NSArray<NSString*>* admins = [NSArray arrayWithObject:accountInfo.userId];
     NSString* groupId = [sdkWrapper createGroup:@"amzingGroupName" members:members admins:admins error:&error];
     if (error != nil)
     {
@@ -78,7 +78,7 @@
     }
     NSLog(@"groupId %@", groupId);
 
-    EncryptionSession *es1SDK1 = [sdkWrapper createEncryptionSession:members useCache:@YES error:&error];
+    SealdEncryptionSession* es1SDK1 = [sdkWrapper createEncryptionSession:members useCache:@YES error:&error];
     if (error != nil)
     {
         NSLog(@"createEncryptionSession ERROR %@", error.userInfo);
