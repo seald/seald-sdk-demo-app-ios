@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6003F589195388D20070C39A"
-               BuildableName = "SealdSDK_Example.app"
+               BuildableName = "SealdSDK demo app ios_Example.app"
                BlueprintName = "SealdSDK demo app ios_Example"
                ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "SealdSDK_Example.app"
+            BuildableName = "SealdSDK demo app ios_Example.app"
             BlueprintName = "SealdSDK demo app ios_Example"
             ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
@@ -42,7 +42,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6003F5AD195388D20070C39A"
-               BuildableName = "SealdSDK_Tests.xctest"
+               BuildableName = "SealdSDK demo app ios_Tests.xctest"
                BlueprintName = "SealdSDK demo app ios_Tests"
                ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
             </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "SealdSDK_Example.app"
+            BuildableName = "SealdSDK demo app ios_Example.app"
             BlueprintName = "SealdSDK demo app ios_Example"
             ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
@@ -81,7 +81,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "SealdSDK_Example.app"
+            BuildableName = "SealdSDK demo app ios_Example.app"
             BlueprintName = "SealdSDK demo app ios_Example"
             ReferencedContainer = "container:SealdSDK demo app ios.xcodeproj">
          </BuildableReference>
