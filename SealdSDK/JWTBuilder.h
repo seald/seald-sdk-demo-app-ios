@@ -7,19 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <JWT/JWT.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DemoAppJWTBuilder : NSObject
 
-typedef NS_ENUM(NSInteger, JWTPermission) {
-    JWTPermissionAll = -1,
-    JWTPermissionAnonymousCreateMessage = 0,
-    JWTPermissionAnonymousFindKey = 1,
-    JWTPermissionAnonymousFindSigchain = 2,
-    JWTPermissionJoinTeam = 3,
-    JWTPermissionAddConnector = 4,
-};
+@property (nonatomic, copy, readonly) NSString* JWTSharedSecretId;
+@property (nonatomic, copy, readonly) NSString* JWTSharedSecret;
+@property (nonatomic, copy, readonly) id<JWTAlgorithm> JWTAlgorithm;
 
 - (instancetype)initWithJWTSharedSecretId:(NSString *)JWTSharedSecretId JWTSharedSecret:(NSString *)JWTSharedSecret;
 - (NSString *)signupJWT;
