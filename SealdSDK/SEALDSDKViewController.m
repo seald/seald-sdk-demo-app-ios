@@ -3,7 +3,7 @@
 //  SealdSDK
 //
 //  Created by clement on 02/13/2023.
-//  Copyright (c) 2023 clement. All rights reserved.
+//  Copyright (c) 2023 Seald SAS. All rights reserved.
 //
 
 #import "SEALDSDKViewController.h"

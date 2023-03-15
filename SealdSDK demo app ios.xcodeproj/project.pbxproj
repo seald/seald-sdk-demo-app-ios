@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17B05EEEAEC37921867D3C85 /* Pods_SealdSDK_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3225AF710728F105EB6F6173 /* Pods_SealdSDK_Example.framework */; };
+		277BE14C29BB6EE500F1F346 /* JWTBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 277BE14B29BB6EE500F1F346 /* JWTBuilder.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -22,8 +22,9 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
+		7B0A6BA518C4E5A6045A473D /* Pods_SealdSDK_demo_app_ios_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F38E47F3F974C5C0C9A62F3 /* Pods_SealdSDK_demo_app_ios_Tests.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
-		FE8229401B9A3784E1121A52 /* Pods_SealdSDK_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */; };
+		E488FDF1E3504926B209D7C2 /* Pods_SealdSDK_demo_app_ios_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9668C60264C0DD4BD7DF6F84 /* Pods_SealdSDK_demo_app_ios_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,36 +38,43 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		31F40D85F44EAB624FE2FA4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		3225AF710728F105EB6F6173 /* Pods_SealdSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		277BE14A29BB6ED100F1F346 /* JWTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWTBuilder.h; sourceTree = "<group>"; };
+		277BE14B29BB6EE500F1F346 /* JWTBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWTBuilder.m; sourceTree = "<group>"; };
+		31F40D85F44EAB624FE2FA4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		399C28233C2B6AAD178C84D7 /* Pods-SealdSDK_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.release.xcconfig"; sourceTree = "<group>"; };
+		3F38E47F3F974C5C0C9A62F3 /* Pods_SealdSDK_demo_app_ios_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_demo_app_ios_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51D4939D1A9AFDC81C849E8B /* Pods-SealdSDK_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Tests.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		6003F58A195388D20070C39A /* SealdSDK_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SealdSDK_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B464323B9C58DA245FF8497 /* Pods-SealdSDK demo app ios_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK demo app ios_Tests.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK demo app ios_Tests/Pods-SealdSDK demo app ios_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		6003F58A195388D20070C39A /* SealdSDK demo app ios_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SealdSDK demo app ios_Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6003F591195388D20070C39A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		6003F595195388D20070C39A /* SealdSDK-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SealdSDK-Info.plist"; sourceTree = "<group>"; };
+		6003F595195388D20070C39A /* SealdSDK demo app ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SealdSDK demo app ios-Info.plist"; sourceTree = "<group>"; };
 		6003F597195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F599195388D20070C39A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		6003F59B195388D20070C39A /* SealdSDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SealdSDK-Prefix.pch"; sourceTree = "<group>"; };
+		6003F59B195388D20070C39A /* SealdSDK demo app ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SealdSDK demo app ios-Prefix.pch"; sourceTree = "<group>"; };
 		6003F59C195388D20070C39A /* SEALDSDKAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SEALDSDKAppDelegate.h; sourceTree = "<group>"; };
 		6003F59D195388D20070C39A /* SEALDSDKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SEALDSDKAppDelegate.m; sourceTree = "<group>"; };
 		6003F5A5195388D20070C39A /* SEALDSDKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SEALDSDKViewController.h; sourceTree = "<group>"; };
 		6003F5A6195388D20070C39A /* SEALDSDKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SEALDSDKViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6003F5AE195388D20070C39A /* SealdSDK_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SealdSDK_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6003F5AE195388D20070C39A /* SealdSDK demo app ios_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SealdSDK demo app ios_Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		6572EEEF3EE7EDF6BF2C1A06 /* Pods-SealdSDK_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Tests.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		7BCF0A0DFAE5DF79EF4AF4CD /* SealdSDK.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = SealdSDK.podspec; path = ../SealdSDK.podspec; sourceTree = "<group>"; };
+		77BBA8541E5F222174C6628C /* Pods-SealdSDK demo app ios_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK demo app ios_Example.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK demo app ios_Example/Pods-SealdSDK demo app ios_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		7BCF0A0DFAE5DF79EF4AF4CD /* SealdSDK.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = SealdSDK.podspec; path = ../SealdSDK.podspec; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		914B6DE029ACCDA700B9FDE9 /* SealdSdkInternals.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SealdSdkInternals.xcframework; path = Pods/SealdSdk/SealdSdkInternals.xcframework; sourceTree = "<group>"; };
+		9668C60264C0DD4BD7DF6F84 /* Pods_SealdSDK_demo_app_ios_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_demo_app_ios_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4ED89899BAD028C0A6A1437 /* Pods-SealdSDK demo app ios_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK demo app ios_Example.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK demo app ios_Example/Pods-SealdSDK demo app ios_Example.release.xcconfig"; sourceTree = "<group>"; };
 		D2D0D203E91566F8B7DBC5D1 /* Pods-SealdSDK_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F8455D947DCC6C8289496604 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		FE5ED168D191DDF6382DAEE6 /* Pods-SealdSDK demo app ios_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK demo app ios_Tests.debug.xcconfig"; path = "Target Support Files/Pods-SealdSDK demo app ios_Tests/Pods-SealdSDK demo app ios_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +85,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				17B05EEEAEC37921867D3C85 /* Pods_SealdSDK_Example.framework in Frameworks */,
+				E488FDF1E3504926B209D7C2 /* Pods_SealdSDK_demo_app_ios_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +96,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				FE8229401B9A3784E1121A52 /* Pods_SealdSDK_Tests.framework in Frameworks */,
+				7B0A6BA518C4E5A6045A473D /* Pods_SealdSDK_demo_app_ios_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,8 +110,11 @@
 				399C28233C2B6AAD178C84D7 /* Pods-SealdSDK_Example.release.xcconfig */,
 				6572EEEF3EE7EDF6BF2C1A06 /* Pods-SealdSDK_Tests.debug.xcconfig */,
 				51D4939D1A9AFDC81C849E8B /* Pods-SealdSDK_Tests.release.xcconfig */,
+				77BBA8541E5F222174C6628C /* Pods-SealdSDK demo app ios_Example.debug.xcconfig */,
+				B4ED89899BAD028C0A6A1437 /* Pods-SealdSDK demo app ios_Example.release.xcconfig */,
+				FE5ED168D191DDF6382DAEE6 /* Pods-SealdSDK demo app ios_Tests.debug.xcconfig */,
+				5B464323B9C58DA245FF8497 /* Pods-SealdSDK demo app ios_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -122,8 +133,8 @@
 		6003F58B195388D20070C39A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6003F58A195388D20070C39A /* SealdSDK_Example.app */,
-				6003F5AE195388D20070C39A /* SealdSDK_Tests.xctest */,
+				6003F58A195388D20070C39A /* SealdSDK demo app ios_Example.app */,
+				6003F5AE195388D20070C39A /* SealdSDK demo app ios_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,12 +142,13 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				914B6DE029ACCDA700B9FDE9 /* SealdSdkInternals.xcframework */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				3225AF710728F105EB6F6173 /* Pods_SealdSDK_Example.framework */,
-				71693A86DEBC599E82B836AC /* Pods_SealdSDK_Tests.framework */,
+				9668C60264C0DD4BD7DF6F84 /* Pods_SealdSDK_demo_app_ios_Example.framework */,
+				3F38E47F3F974C5C0C9A62F3 /* Pods_SealdSDK_demo_app_ios_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -144,6 +156,8 @@
 		6003F593195388D20070C39A /* Example for SealdSDK */ = {
 			isa = PBXGroup;
 			children = (
+				277BE14B29BB6EE500F1F346 /* JWTBuilder.m */,
+				277BE14A29BB6ED100F1F346 /* JWTBuilder.h */,
 				6003F59C195388D20070C39A /* SEALDSDKAppDelegate.h */,
 				6003F59D195388D20070C39A /* SEALDSDKAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
@@ -160,10 +174,10 @@
 		6003F594195388D20070C39A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				6003F595195388D20070C39A /* SealdSDK-Info.plist */,
+				6003F595195388D20070C39A /* SealdSDK demo app ios-Info.plist */,
 				6003F596195388D20070C39A /* InfoPlist.strings */,
 				6003F599195388D20070C39A /* main.m */,
-				6003F59B195388D20070C39A /* SealdSDK-Prefix.pch */,
+				6003F59B195388D20070C39A /* SealdSDK demo app ios-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -200,9 +214,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6003F589195388D20070C39A /* SealdSDK_Example */ = {
+		6003F589195388D20070C39A /* SealdSDK demo app ios_Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK_Example" */;
+			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK demo app ios_Example" */;
 			buildPhases = (
 				BAE98449582799507034AEB9 /* [CP] Check Pods Manifest.lock */,
 				6003F586195388D20070C39A /* Sources */,
@@ -214,14 +228,14 @@
 			);
 			dependencies = (
 			);
-			name = SealdSDK_Example;
+			name = "SealdSDK demo app ios_Example";
 			productName = SealdSDK;
-			productReference = 6003F58A195388D20070C39A /* SealdSDK_Example.app */;
+			productReference = 6003F58A195388D20070C39A /* SealdSDK demo app ios_Example.app */;
 			productType = "com.apple.product-type.application";
 		};
-		6003F5AD195388D20070C39A /* SealdSDK_Tests */ = {
+		6003F5AD195388D20070C39A /* SealdSDK demo app ios_Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK_Tests" */;
+			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK demo app ios_Tests" */;
 			buildPhases = (
 				738F28BFDAB80EC0E9E883C8 /* [CP] Check Pods Manifest.lock */,
 				6003F5AA195388D20070C39A /* Sources */,
@@ -234,9 +248,9 @@
 			dependencies = (
 				6003F5B4195388D20070C39A /* PBXTargetDependency */,
 			);
-			name = SealdSDK_Tests;
+			name = "SealdSDK demo app ios_Tests";
 			productName = SealdSDKTests;
-			productReference = 6003F5AE195388D20070C39A /* SealdSDK_Tests.xctest */;
+			productReference = 6003F5AE195388D20070C39A /* SealdSDK demo app ios_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -247,18 +261,19 @@
 			attributes = {
 				CLASSPREFIX = SEALDSDK;
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = clement;
+				ORGANIZATIONNAME = "Seald SAS";
 				TargetAttributes = {
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 				};
 			};
-			buildConfigurationList = 6003F585195388D10070C39A /* Build configuration list for PBXProject "SealdSDK" */;
+			buildConfigurationList = 6003F585195388D10070C39A /* Build configuration list for PBXProject "SealdSDK demo app ios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -267,8 +282,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6003F589195388D20070C39A /* SealdSDK_Example */,
-				6003F5AD195388D20070C39A /* SealdSDK_Tests */,
+				6003F589195388D20070C39A /* SealdSDK demo app ios_Example */,
+				6003F5AD195388D20070C39A /* SealdSDK demo app ios_Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -302,18 +317,20 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SealdSDK demo app ios_Example/Pods-SealdSDK demo app ios_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Base64/Base64.framework",
 				"${BUILT_PRODUCTS_DIR}/JWT/JWT.framework",
+				"${BUILT_PRODUCTS_DIR}/SealdSdk/SealdSdk.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Base64.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWT.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SealdSdk.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SealdSDK demo app ios_Example/Pods-SealdSDK demo app ios_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		738F28BFDAB80EC0E9E883C8 /* [CP] Check Pods Manifest.lock */ = {
@@ -331,7 +348,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SealdSDK_Tests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SealdSDK demo app ios_Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -344,7 +361,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SealdSDK demo app ios_Tests/Pods-SealdSDK demo app ios_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Expecta/Expecta.framework",
 				"${BUILT_PRODUCTS_DIR}/Specta/Specta.framework",
 			);
@@ -355,7 +372,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SealdSDK_Tests/Pods-SealdSDK_Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SealdSDK demo app ios_Tests/Pods-SealdSDK demo app ios_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BAE98449582799507034AEB9 /* [CP] Check Pods Manifest.lock */ = {
@@ -373,7 +390,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SealdSDK_Example-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SealdSDK demo app ios_Example-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -390,6 +407,7 @@
 				6003F59E195388D20070C39A /* SEALDSDKAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* SEALDSDKViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				277BE14C29BB6EE500F1F346 /* JWTBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,7 +424,7 @@
 /* Begin PBXTargetDependency section */
 		6003F5B4195388D20070C39A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6003F589195388D20070C39A /* SealdSDK_Example */;
+			target = 6003F589195388D20070C39A /* SealdSDK demo app ios_Example */;
 			targetProxy = 6003F5B3195388D20070C39A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -514,12 +532,12 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2D0D203E91566F8B7DBC5D1 /* Pods-SealdSDK_Example.debug.xcconfig */;
+			baseConfigurationReference = 77BBA8541E5F222174C6628C /* Pods-SealdSDK demo app ios_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SealdSDK/SealdSDK-Prefix.pch";
-				INFOPLIST_FILE = "SealdSDK/SealdSDK-Info.plist";
+				GCC_PREFIX_HEADER = "SealdSDK/SealdSDK demo app ios-Prefix.pch";
+				INFOPLIST_FILE = "SealdSDK/SealdSDK demo app ios-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -530,12 +548,12 @@
 		};
 		6003F5C1195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 399C28233C2B6AAD178C84D7 /* Pods-SealdSDK_Example.release.xcconfig */;
+			baseConfigurationReference = B4ED89899BAD028C0A6A1437 /* Pods-SealdSDK demo app ios_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "SealdSDK/SealdSDK-Prefix.pch";
-				INFOPLIST_FILE = "SealdSDK/SealdSDK-Info.plist";
+				GCC_PREFIX_HEADER = "SealdSDK/SealdSDK demo app ios-Prefix.pch";
+				INFOPLIST_FILE = "SealdSDK/SealdSDK demo app ios-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -546,7 +564,7 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6572EEEF3EE7EDF6BF2C1A06 /* Pods-SealdSDK_Tests.debug.xcconfig */;
+			baseConfigurationReference = FE5ED168D191DDF6382DAEE6 /* Pods-SealdSDK demo app ios_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -564,14 +582,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SealdSDK_Example.app/SealdSDK_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SealdSDK demo app ios_Example.app/SealdSDK demo app ios_Example";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51D4939D1A9AFDC81C849E8B /* Pods-SealdSDK_Tests.release.xcconfig */;
+			baseConfigurationReference = 5B464323B9C58DA245FF8497 /* Pods-SealdSDK demo app ios_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -585,7 +603,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SealdSDK_Example.app/SealdSDK_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SealdSDK demo app ios_Example.app/SealdSDK demo app ios_Example";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
@@ -593,7 +611,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6003F585195388D10070C39A /* Build configuration list for PBXProject "SealdSDK" */ = {
+		6003F585195388D10070C39A /* Build configuration list for PBXProject "SealdSDK demo app ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6003F5BD195388D20070C39A /* Debug */,
@@ -602,7 +620,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK_Example" */ = {
+		6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK demo app ios_Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6003F5C0195388D20070C39A /* Debug */,
@@ -611,7 +629,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK_Tests" */ = {
+		6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "SealdSDK demo app ios_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6003F5C3195388D20070C39A /* Debug */,
