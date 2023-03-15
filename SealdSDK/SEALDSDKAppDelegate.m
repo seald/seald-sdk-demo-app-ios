@@ -83,18 +83,18 @@
     NSAssert(error == nil, [error localizedDescription]);
     
     // Manage group members and admins
-    [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user2AccountInfo.userId] adminsToSet:[NSArray new] error:&error];
+    [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user2AccountInfo.userId] adminsToSet:[NSArray new] error:&error]; // Add user2 as group member
     NSAssert(error == nil, [error localizedDescription]);
-    [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user3AccountInfo.userId] adminsToSet:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user3AccountInfo.userId] adminsToSet:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error]; // user1 adds user3 as group member and group admin
     NSAssert(error == nil, [error localizedDescription]);
     [sdk3 removeGroupMembersWithGroupId:groupId membersToRemove:[NSArray arrayWithObject:user2AccountInfo.userId] error:&error];
-    NSAssert(error == nil, [error localizedDescription]);
-    [sdk3 setGroupAdminsWithGroupId:groupId addToAdmins:[NSArray new] removeFromAdmins:[NSArray arrayWithObject:user1AccountInfo.userId] error:&error];
+    NSAssert(error == nil, [error localizedDescription]); // user3 can remove user2
+    [sdk3 setGroupAdminsWithGroupId:groupId addToAdmins:[NSArray new] removeFromAdmins:[NSArray arrayWithObject:user1AccountInfo.userId] error:&error]; // user3 can remove user1 from admins
     NSAssert(error == nil, [error localizedDescription]);
     
     // Create encryption session: https://docs.seald.io/sdk/guides/6-encryption-sessions.html
     NSArray<NSString*>* recipients = [NSArray arrayWithObjects:user1AccountInfo.userId, user2AccountInfo.userId, groupId, nil];
-    SealdEncryptionSession *es1SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipients useCache:@YES error:&error];
+    SealdEncryptionSession *es1SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipients useCache:@YES error:&error]; // user1, user2, and group as recipients
     NSAssert(error == nil, [error localizedDescription]);
     
     // The SealdEncryptionSession object can encrypt and decrypt for user1
@@ -132,7 +132,6 @@
     // user3 could retrieve the previous encryption session only because "group-1" was set as recipient.
     // As the group was deleted, it can no longer access it.
     // user3 still has the encryption session in its cache, but we can disable it.
-    NSAssert(error == nil, [error localizedDescription]);
     [sdk3 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@YES error:&error];
     NSAssert(error != nil, @"expected error");
     NSRange range = [error.localizedDescription rangeOfString:@"status: 404"];
@@ -166,7 +165,6 @@
     NSAssert(error == nil, [error localizedDescription]);
     
     // user2 cannot retrieve the session anymore
-    NSAssert(error == nil, [error localizedDescription]);
     [sdk2 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@NO error:&error];
     NSAssert(error != nil, @"expected error");
     range = [error.localizedDescription rangeOfString:@"status: 404"];
@@ -176,7 +174,12 @@
     // user1 revokes all. It can no longer retrieve it.
     [es1SDK1 revokeAll:&error];
     NSAssert(error == nil, [error localizedDescription]);
-    
+    [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
+    NSAssert(error != nil, @"expected error");
+    range = [error.localizedDescription rangeOfString:@"status: 404"];
+    NSAssert(range.location != NSNotFound, @"invalid error");
+    error = nil;
+
     // Create additional data for user1
     SealdEncryptionSession *es2SDK1 = [sdk1 createEncryptionSessionWithRecipients:[NSArray arrayWithObject:user1AccountInfo.userId] useCache:@YES error:&error];
     NSAssert(error == nil, [error localizedDescription]);
