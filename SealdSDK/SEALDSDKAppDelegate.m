@@ -105,6 +105,29 @@
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert([decryptedMessage isEqualToString:initialString], @"decryptedMessage incorrect");
     
+    // Create a test file on disk that we will encrypt/decrypt
+    NSString *filename = @"testfile.txt";
+    NSString *fileContent = @"File clear data.";
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", sealdDir, filename];
+    [fileContent writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    NSAssert(error == nil, [error localizedDescription]);
+
+    // Encrypt the test file. Resulting file will be written alongside the source file, with `.seald` extension added
+    NSString *encryptedFileURI = [es1SDK1 encryptFileFromURI:filePath error:&error];
+
+    // User1 can retrieve the encryptionSession directly from the encrypted file
+    SealdEncryptionSession *es1SDK1FromFile = [sdk1 retrieveEncryptionSessionFromFile:encryptedFileURI useCache:YES error:&error];
+    NSAssert(error == nil, [error localizedDescription]);
+    
+    // The retrieved session can decrypt the file.
+    // The decrypted file will be named with the name it has at encryption. Any renaming of the encrypted file will be ignored.
+    // NOTE: In this example, the original file will be overwritten
+    NSString *decryptedFileURI = [es1SDK1FromFile decryptFileFromURI:encryptedFileURI error:&error];
+    NSAssert(error == nil, [error localizedDescription]);
+    NSAssert([decryptedFileURI hasSuffix:filename], @"decryptedFileURI incorrect");
+    NSString *decryptedFileContent = [NSString stringWithContentsOfFile:decryptedFileURI encoding:NSUTF8StringEncoding error:&error];
+    NSAssert([fileContent isEqualToString:decryptedFileContent], @"decryptedFileContent incorrect");
+
     // user1 can retrieve the EncryptionSession from the encrypted message
     SealdEncryptionSession *es1SDK1RetrieveFromMess = [sdk1 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@YES error:&error];
     NSAssert(error == nil, [error localizedDescription]);
