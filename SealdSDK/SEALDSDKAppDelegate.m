@@ -124,7 +124,7 @@
     // NOTE: In this example, the original file will be overwritten
     NSString *decryptedFileURI = [es1SDK1FromFile decryptFileFromURI:encryptedFileURI error:&error];
     NSAssert(error == nil, [error localizedDescription]);
-    NSAssert([decryptedFileURI hasSuffix:filename], @"decryptedFileURI incorrect");
+    NSAssert([decryptedFileURI hasSuffix:@"testfile (1).txt"], @"decryptedFileURI incorrect");
     NSString *decryptedFileContent = [NSString stringWithContentsOfFile:decryptedFileURI encoding:NSUTF8StringEncoding error:&error];
     NSAssert([fileContent isEqualToString:decryptedFileContent], @"decryptedFileContent incorrect");
 
@@ -161,9 +161,18 @@
     NSAssert(range.location != NSNotFound, @"invalid error");
     error = nil;
     
-    // user2 adds user3 as recipient of the encryption session.
-    [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSArray<SealdActionStatus *> *respRevokeBefore = [es1SDK2 revokeRecipients:@[user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
+    NSAssert(respRevokeBefore.count == 1, @"Unexpected response count.");
+    NSAssert([user3AccountInfo.userId isEqualToString:respRevokeBefore[0].userId], @"User ID mismatch.");
+    NSAssert([respRevokeBefore[0].status isEqualToString:@"ko"], @"Unexpected status.");
+    
+    // user2 adds user3 as recipient of the encryption session.
+    NSArray<SealdActionStatus *> *respAdd = [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSAssert(error == nil, [error localizedDescription]);
+    NSAssert(respAdd.count == 1, @"Unexpected response count.");
+    NSAssert([user3AccountInfo.deviceId isEqualToString:respAdd[0].userId], @"User ID mismatch.");
+    NSAssert([respAdd[0].status isEqualToString:@"ok"], @"Unexpected status.");
 
     // user3 can now retrieve it.
     SealdEncryptionSession *es1SDK3 = [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -173,8 +182,11 @@
     NSAssert([decryptedMessageAfterAdd isEqualToString:initialString], @"decryptedMessageAfterAdd incorrect");
 
     // user2 revokes user3 from the encryption session.
-    [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSArray<SealdActionStatus *> *respRevoke = [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
+    NSAssert(respRevoke.count == 1, @"Unexpected response count.");
+    NSAssert([user3AccountInfo.userId isEqualToString:respRevoke[0].userId], @"User ID mismatch.");
+    NSAssert([respAdd[0].status isEqualToString:@"ok"], @"Unexpected status.");
 
     // user3 cannot retrieve the session anymore
     [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -184,8 +196,12 @@
     error = nil;
     
     // user1 revokes all other recipients from the session
-    [es1SDK1 revokeOthers:&error];
+    NSArray<SealdActionStatus *> *respOther = [es1SDK1 revokeOthers:&error];
     NSAssert(error == nil, [error localizedDescription]);
+    NSAssert(respOther.count == 3, @"Unexpected response count.");
+    for (SealdActionStatus *el in respOther) {
+        NSAssert([el.status isEqualToString:@"ok"], @"Unexpected status.");
+    }
     
     // user2 cannot retrieve the session anymore
     [sdk2 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@NO error:&error];
@@ -195,8 +211,12 @@
     error = nil;
     
     // user1 revokes all. It can no longer retrieve it.
-    [es1SDK1 revokeAll:&error];
+    NSArray<SealdActionStatus *> *respRevokeAll = [es1SDK1 revokeAll:&error];
     NSAssert(error == nil, [error localizedDescription]);
+    for (SealdActionStatus *el in respRevokeAll) {
+        NSAssert([el.status isEqualToString:@"ok"], @"Unexpected status.");
+    }
+    
     [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
     NSAssert(error != nil, @"expected error");
     range = [error.localizedDescription rangeOfString:@"status: 404"];
