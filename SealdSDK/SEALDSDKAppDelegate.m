@@ -121,7 +121,7 @@
     
     // The retrieved session can decrypt the file.
     // The decrypted file will be named with the name it has at encryption. Any renaming of the encrypted file will be ignored.
-    // NOTE: In this example, the original file will be overwritten
+    // NOTE: In this example, the decrypted file will have `(1)` suffix to avoid overwriting the original clear file.
     NSString *decryptedFileURI = [es1SDK1FromFile decryptFileFromURI:encryptedFileURI error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert([decryptedFileURI hasSuffix:@"testfile (1).txt"], @"decryptedFileURI incorrect");
