@@ -161,18 +161,16 @@
     NSAssert(range.location != NSNotFound, @"invalid error");
     error = nil;
     
-    NSArray<SealdActionStatus *> *respRevokeBefore = [es1SDK2 revokeRecipients:@[user3AccountInfo.userId] error:&error];
+    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevokeBefore = [es1SDK2 revokeRecipients:@[user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respRevokeBefore.count == 1, @"Unexpected response count.");
-    NSAssert([user3AccountInfo.userId isEqualToString:respRevokeBefore[0].userId], @"User ID mismatch.");
-    NSAssert([respRevokeBefore[0].status isEqualToString:@"ko"], @"Unexpected status.");
+    NSAssert([respRevokeBefore[user3AccountInfo.userId].status isEqualToString:@"ko"], @"User ID mismatch.");
     
     // user2 adds user3 as recipient of the encryption session.
-    NSArray<SealdActionStatus *> *respAdd = [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSMutableDictionary<NSString *, SealdActionStatus *> *respAdd = [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respAdd.count == 1, @"Unexpected response count.");
-    NSAssert([user3AccountInfo.deviceId isEqualToString:respAdd[0].userId], @"User ID mismatch.");
-    NSAssert([respAdd[0].status isEqualToString:@"ok"], @"Unexpected status.");
+    NSAssert([respAdd[user3AccountInfo.deviceId].status isEqualToString:@"ok"], @"User ID mismatch."); // Note that addRecipient return userId instead of deviceId
 
     // user3 can now retrieve it.
     SealdEncryptionSession *es1SDK3 = [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -182,11 +180,10 @@
     NSAssert([decryptedMessageAfterAdd isEqualToString:initialString], @"decryptedMessageAfterAdd incorrect");
 
     // user2 revokes user3 from the encryption session.
-    NSArray<SealdActionStatus *> *respRevoke = [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevoke = [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respRevoke.count == 1, @"Unexpected response count.");
-    NSAssert([user3AccountInfo.userId isEqualToString:respRevoke[0].userId], @"User ID mismatch.");
-    NSAssert([respAdd[0].status isEqualToString:@"ok"], @"Unexpected status.");
+    NSAssert([respRevoke[user3AccountInfo.userId].status isEqualToString:@"ok"], @"Unexpected status.");
 
     // user3 cannot retrieve the session anymore
     [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -196,12 +193,15 @@
     error = nil;
     
     // user1 revokes all other recipients from the session
-    NSArray<SealdActionStatus *> *respOther = [es1SDK1 revokeOthers:&error];
+    NSLog(@"YOYOYOYO");
+    NSLog(@"YOYOYOYO 1");
+    NSMutableDictionary<NSString *, SealdActionStatus *> *respOther = [es1SDK1 revokeOthers:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respOther.count == 3, @"Unexpected response count.");
-    for (SealdActionStatus *el in respOther) {
-        NSAssert([el.status isEqualToString:@"ok"], @"Unexpected status.");
+    for (NSString *key in respOther) {
+        NSAssert([respOther[key].status isEqualToString:@"ok"], @"Unexpected status.");
     }
+    NSLog(@"YOYOYOYO 2");
     
     // user2 cannot retrieve the session anymore
     [sdk2 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@NO error:&error];
@@ -211,10 +211,10 @@
     error = nil;
     
     // user1 revokes all. It can no longer retrieve it.
-    NSArray<SealdActionStatus *> *respRevokeAll = [es1SDK1 revokeAll:&error];
+    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevokeAll = [es1SDK1 revokeAll:&error];
     NSAssert(error == nil, [error localizedDescription]);
-    for (SealdActionStatus *el in respRevokeAll) {
-        NSAssert([el.status isEqualToString:@"ok"], @"Unexpected status.");
+    for (NSString *key in respRevokeAll) {
+        NSAssert([respRevokeAll[key].status isEqualToString:@"ok"], @"Unexpected status.");
     }
     
     [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
