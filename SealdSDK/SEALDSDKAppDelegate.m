@@ -161,16 +161,16 @@
     NSAssert(range.location != NSNotFound, @"invalid error");
     error = nil;
     
-    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevokeBefore = [es1SDK2 revokeRecipients:@[user3AccountInfo.userId] error:&error];
+    NSDictionary<NSString *, SealdActionStatus *> *respRevokeBefore = [es1SDK2 revokeRecipients:@[user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respRevokeBefore.count == 1, @"Unexpected response count.");
-    NSAssert([respRevokeBefore[user3AccountInfo.userId].status isEqualToString:@"ko"], @"User ID mismatch.");
+    NSAssert(!respRevokeBefore[user3AccountInfo.userId].success, @"User ID mismatch.");
     
     // user2 adds user3 as recipient of the encryption session.
-    NSMutableDictionary<NSString *, SealdActionStatus *> *respAdd = [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSDictionary<NSString *, SealdActionStatus *> *respAdd = [es1SDK2 addRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respAdd.count == 1, @"Unexpected response count.");
-    NSAssert([respAdd[user3AccountInfo.deviceId].status isEqualToString:@"ok"], @"User ID mismatch."); // Note that addRecipient return userId instead of deviceId
+    NSAssert(respAdd[user3AccountInfo.deviceId].success, @"User ID mismatch."); // Note that addRecipient return userId instead of deviceId
 
     // user3 can now retrieve it.
     SealdEncryptionSession *es1SDK3 = [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -180,10 +180,10 @@
     NSAssert([decryptedMessageAfterAdd isEqualToString:initialString], @"decryptedMessageAfterAdd incorrect");
 
     // user2 revokes user3 from the encryption session.
-    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevoke = [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
+    NSDictionary<NSString *, SealdActionStatus *> *respRevoke = [es1SDK2 revokeRecipients:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respRevoke.count == 1, @"Unexpected response count.");
-    NSAssert([respRevoke[user3AccountInfo.userId].status isEqualToString:@"ok"], @"Unexpected status.");
+    NSAssert(respRevoke[user3AccountInfo.userId].success, @"Unexpected status.");
 
     // user3 cannot retrieve the session anymore
     [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
@@ -193,15 +193,12 @@
     error = nil;
     
     // user1 revokes all other recipients from the session
-    NSLog(@"YOYOYOYO");
-    NSLog(@"YOYOYOYO 1");
-    NSMutableDictionary<NSString *, SealdActionStatus *> *respOther = [es1SDK1 revokeOthers:&error];
+    NSDictionary<NSString *, SealdActionStatus *> *respOther = [es1SDK1 revokeOthers:&error];
     NSAssert(error == nil, [error localizedDescription]);
     NSAssert(respOther.count == 3, @"Unexpected response count.");
     for (NSString *key in respOther) {
-        NSAssert([respOther[key].status isEqualToString:@"ok"], @"Unexpected status.");
+        NSAssert(respOther[key].success, @"Unexpected status.");
     }
-    NSLog(@"YOYOYOYO 2");
     
     // user2 cannot retrieve the session anymore
     [sdk2 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:@NO error:&error];
@@ -211,10 +208,10 @@
     error = nil;
     
     // user1 revokes all. It can no longer retrieve it.
-    NSMutableDictionary<NSString *, SealdActionStatus *> *respRevokeAll = [es1SDK1 revokeAll:&error];
+    NSDictionary<NSString *, SealdActionStatus *> *respRevokeAll = [es1SDK1 revokeAll:&error];
     NSAssert(error == nil, [error localizedDescription]);
     for (NSString *key in respRevokeAll) {
-        NSAssert([respRevokeAll[key].status isEqualToString:@"ok"], @"Unexpected status.");
+        NSAssert(respRevokeAll[key].success, @"Unexpected status.");
     }
     
     [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
