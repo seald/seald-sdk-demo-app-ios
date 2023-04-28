@@ -19,6 +19,10 @@ typedef struct {
     const NSString* appId;
     const NSString* JWTSharedSecretId;
     const NSString* JWTSharedSecret;
+    const NSString* ssksURL;
+    const NSString* ssksBackendAppId;
+    const NSString* ssksBackendAppKey;
+    const NSString* ssksTMRChallenge;
 } SealdCredentials;
 
 void testSealdSDKWithCredentials(SealdCredentials* credentials, NSString* sealdDir);

@@ -8,8 +8,10 @@
 
 #import "SEALDSDKAppDelegate.h"
 #import <SealdSdk/SealdSdk.h>
+#import <SealdSdk/SealdSsks.h>
 #import <JWT/JWT.h>
 #import "JWTBuilder.h"
+#import "ssksBackend.h"
 
 @implementation SEALDSDKAppDelegate
 
@@ -22,7 +24,11 @@
         .apiURL = @"https://api.staging-0.seald.io/",
         .appId = @"1e2600a5-417e-4333-93a6-2b196781b0de",
         .JWTSharedSecretId = @"32b4e3db-300b-4916-90e6-0020639c3df0",
-        .JWTSharedSecret = @"VstlqoxvQPAxRTDa6cAzWiQiqcgETNP8yYnNyhGWXaI6uS7X5t8csh1xYeLTjTTO"
+        .JWTSharedSecret = @"VstlqoxvQPAxRTDa6cAzWiQiqcgETNP8yYnNyhGWXaI6uS7X5t8csh1xYeLTjTTO",
+        .ssksURL = @"https://ssks.soyouz.seald.io/",
+        .ssksBackendAppId = @"00000000-0000-0000-0000-000000000001",
+        .ssksBackendAppKey = @"00000000-0000-0000-0000-000000000002",
+        .ssksTMRChallenge = @"aaaaaaaa"
     };
     
     // Find database Path
@@ -40,10 +46,16 @@
     } else {
         NSLog(@"Error removing Seald database %@", error.userInfo);
     }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        testSealdSsksTMR(&sealdCredentials);
+    });
 
+    /*
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         testSealdSDKWithCredentials(&sealdCredentials, sealdDir);
     });
+     */
     
     return YES;
 }
@@ -75,11 +87,36 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+NSString* randomString(int len) {
+    NSString *letters = @"abcdefghijklmnopqrstuvwxyz0123456789";
+    NSMutableString *randomString = [NSMutableString stringWithCapacity: len];
+
+    for (int i=0; i<len; i++) {
+        [randomString appendFormat: @"%C", [letters characterAtIndex: arc4random_uniform((uint32_t)[letters length])]];
+    }
+
+    return randomString;
+}
+
+void testSealdSsksTMR(SealdCredentials* sealdCredentials)
+{
+    NSError* error = nil;
+    DemoAppSsksBackend* ssksBackend = [[DemoAppSsksBackend alloc] initWithSsksURL:sealdCredentials->ssksURL AppId:sealdCredentials->ssksBackendAppId AppKey:sealdCredentials->ssksBackendAppKey];
+    
+    NSString* rand = randomString(10);
+    NSString* userId = [NSString stringWithFormat:@"user-%@", rand];
+    NSString* userEM = [NSString stringWithFormat:@"user-%@@test.com", rand];
+    
+    SealdSsksAuthFactor* authFactor = [[SealdSsksAuthFactor alloc] initWithValue:userEM type:@"EM"];
+    
+    SealdSsksBackendChallengeResponse* authSession = [ssksBackend challengeSendWithUserId:userId authFactor:authFactor createUser:@YES forceAuth:@YES error:error];
+    NSCAssert(error == nil, [error localizedDescription]);
+    
+    NSLog(@"SealdSsksBackendChallengeResponse %@", authSession.sessionId);
+}
+
 void testSealdSDKWithCredentials(SealdCredentials* sealdCredentials, const NSString* sealdDir)
 {
-    NSLog(@"coucou");
-    NSLog(@"sealdCredentials.appId %@", sealdCredentials->appId);
-    NSLog(@"coucou");
     NSError *error = nil;
     
     // The Seald SDK uses a local database that will persist on disk.
