@@ -13,3 +13,13 @@
 @property (strong, nonatomic) UIWindow *window;
 
 @end
+
+typedef struct {
+    const NSString* apiURL;
+    const NSString* appId;
+    const NSString* JWTSharedSecretId;
+    const NSString* JWTSharedSecret;
+} SealdCredentials;
+
+void testSealdSDKWithCredentials(SealdCredentials* credentials, NSString* sealdDir);
+
