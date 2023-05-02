@@ -32,7 +32,7 @@
                                                    authFactor:(SealdSsksAuthFactor *)authFactor
                                                    createUser:(BOOL)createUser
                                                     forceAuth:(BOOL)forceAuth
-                                                        error:(NSError*)error;
+                                                        error:(NSError**)error;
 
 @end
 

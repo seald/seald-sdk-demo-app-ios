@@ -101,18 +101,30 @@ NSString* randomString(int len) {
 void testSealdSsksTMR(SealdCredentials* sealdCredentials)
 {
     NSError* error = nil;
+    
+    NSString* randKey = randomString(64);
+    NSData *rawTMRKey = [randKey dataUsingEncoding:NSUTF8StringEncoding];
+    
     DemoAppSsksBackend* ssksBackend = [[DemoAppSsksBackend alloc] initWithSsksURL:sealdCredentials->ssksURL AppId:sealdCredentials->ssksBackendAppId AppKey:sealdCredentials->ssksBackendAppKey];
     
     NSString* rand = randomString(10);
     NSString* userId = [NSString stringWithFormat:@"user-%@", rand];
     NSString* userEM = [NSString stringWithFormat:@"user-%@@test.com", rand];
+    NSData *userIdentity = [randKey dataUsingEncoding:NSUTF8StringEncoding]; // should be: [sealdSDKInstance exportIdentity]
     
     SealdSsksAuthFactor* authFactor = [[SealdSsksAuthFactor alloc] initWithValue:userEM type:@"EM"];
     
-    SealdSsksBackendChallengeResponse* authSession = [ssksBackend challengeSendWithUserId:userId authFactor:authFactor createUser:@YES forceAuth:@YES error:error];
+    SealdSsksBackendChallengeResponse* authSession = [ssksBackend challengeSendWithUserId:userId authFactor:authFactor createUser:@YES forceAuth:@YES error:&error];
     NSCAssert(error == nil, [error localizedDescription]);
     
-    NSLog(@"SealdSsksBackendChallengeResponse %@", authSession.sessionId);
+    SealdSsksTMRPlugin* ssksTMR = [[SealdSsksTMRPlugin alloc] initWithSsksURL:sealdCredentials->ssksURL appId:sealdCredentials->appId];
+    
+    [ssksTMR saveIdentity:authSession.sessionId authFactor:authFactor challenge:sealdCredentials->ssksTMRChallenge rawTMRSymKey:rawTMRKey identity:userIdentity error:&error];
+    
+    SealdSsksRetrieveIdentityResponse *resp = [ssksTMR retrieveIdentity:authSession.sessionId authFactor:authFactor challenge:sealdCredentials->ssksTMRChallenge rawTMRSymKey:rawTMRKey error:&error];
+    NSCAssert(error == nil, [error localizedDescription]);
+    NSCAssert([userIdentity isEqualToData:resp.identity], @"invalid retrieved identity");
+    NSCAssert(!resp.shouldRenewKey, @"invalid should renew key value");
 }
 
 void testSealdSDKWithCredentials(SealdCredentials* sealdCredentials, const NSString* sealdDir)

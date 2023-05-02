@@ -70,7 +70,7 @@
     NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     
     // Check for errors
-    if (error) {
+    if (error != nil) {
         NSLog(@"Error: %@", error);
         return nil;
     }
@@ -86,7 +86,7 @@
                                                     authFactor:(SealdSsksAuthFactor*)authFactor
                                                     createUser:(bool)createUser
                                                      forceAuth:(bool)forceAuth
-                                                         error:(NSError*)error {
+                                                         error:(NSError**)error {
     
     NSDictionary *auth = @{
         @"type": authFactor.type,
@@ -101,8 +101,8 @@
     NSString *responseString = [self postAPIWithURL:@"tmr/back/challenge_send/" data:data];
     NSLog(@"Response data: %@", responseString);
 
-    id json = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-    if (error) {
+    id json = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:error];
+    if (*error) {
         NSLog(@"Error parsing JSON data: %@", error);
         return nil;
     }
