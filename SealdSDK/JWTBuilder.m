@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
 };
 
 @implementation DemoAppJWTBuilder
-- (instancetype)initWithJWTSharedSecretId:(NSString*)JWTSharedSecretId JWTSharedSecret:(NSString*)JWTSharedSecret {
+- (instancetype)initWithJWTSharedSecretId:(const NSString*)JWTSharedSecretId JWTSharedSecret:(NSString*)JWTSharedSecret {
     if (self = [super init]) {
         _JWTSharedSecretId = JWTSharedSecretId;
         _JWTSharedSecret = JWTSharedSecret;
@@ -39,12 +39,12 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
                               @"iat" : @((NSInteger)now.timeIntervalSince1970)
     };
 
-    NSString *token = [JWT encodePayload:payload].headers(headers).secret(_JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
+    NSString *token = [JWT encodePayload:payload].headers(headers).secret((NSString*) _JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
 
     return token;
 }
 
-- (NSString*)connectorJWTWithCustomUserId:(NSString*)customUserId appId:(NSString*)appId {
+- (NSString*)connectorJWTWithCustomUserId:(const NSString*)customUserId appId:(const NSString*)appId {
     NSDate *now = [NSDate date];
 
     NSDictionary *headers = @{@"alg" : @"HS256", @"typ" : @"JWT"};
@@ -54,7 +54,7 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
                               @"iss" : _JWTSharedSecretId,
                               @"iat" : @((NSInteger)now.timeIntervalSince1970)
     };
-    NSString *token = [JWT encodePayload:payload].headers(headers).secret(_JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
+    NSString *token = [JWT encodePayload:payload].headers(headers).secret((NSString*) _JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
 
     return token;
 }

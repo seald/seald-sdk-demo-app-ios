@@ -24,14 +24,16 @@
 @property (nonatomic, copy, readonly) NSString* appId;
 @property (nonatomic, copy, readonly) NSString* appKey;
 
-- (instancetype)initWithSsksURL:(NSString *)ssksURL AppId:(NSString *)appId AppKey:(NSString *)appKey;
+- (instancetype)initWithSsksURL:(const NSString *)ssksURL
+                          AppId:(const NSString *)appId
+                         AppKey:(const NSString *)appKey;
 
 - (NSString *)postAPIWithURL:(NSString *)endpoint data:(NSData *)data;
 
-- (SealdSsksBackendChallengeResponse*)challengeSendWithUserId:(NSString *)userId
-                                                   authFactor:(SealdSsksAuthFactor *)authFactor
-                                                   createUser:(BOOL)createUser
-                                                    forceAuth:(BOOL)forceAuth
+- (SealdSsksBackendChallengeResponse*)challengeSendWithUserId:(const NSString *)userId
+                                                   authFactor:(const SealdSsksAuthFactor *)authFactor
+                                                   createUser:(const BOOL)createUser
+                                                    forceAuth:(const BOOL)forceAuth
                                                         error:(NSError**)error;
 
 @end

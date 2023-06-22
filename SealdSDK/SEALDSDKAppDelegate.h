@@ -24,6 +24,3 @@ typedef struct {
     const NSString* ssksBackendAppKey;
     const NSString* ssksTMRChallenge;
 } SealdCredentials;
-
-void testSealdSDKWithCredentials(SealdCredentials* credentials, NSString* sealdDir);
-

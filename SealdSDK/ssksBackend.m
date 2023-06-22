@@ -7,17 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <SealdSdk/SealdSsks.h>
-#import "SsksBackend.h"
+#import <SealdSdk/SealdSsksHelpers.h>
+#import "ssksBackend.h"
 
 @implementation DemoAppSsksBackend
-- (instancetype)initWithSsksURL:(NSString *)ssksURL
-                          AppId:(NSString *)appId
-                         AppKey:(NSString *)appKey {
+- (instancetype)initWithSsksURL:(const NSString *)ssksURL
+                          AppId:(const NSString *)appId
+                         AppKey:(const NSString *)appKey {
     if (self = [super init]) {
-        _ssksURL = ssksURL;
-        _appId = appId;
-        _appKey = appKey;
+        _ssksURL = (NSString*) ssksURL;
+        _appId = (NSString*) appId;
+        _appKey = (NSString*) appKey;
     }
     return self;
 }
@@ -47,45 +47,32 @@
     // Create a session using the configuration
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
     
-    /*
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     // Create a data task with the request
+    __block NSString *responseString;
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             // Handle the error
             NSLog(@"Error: %@", error);
         } else {
             // Handle the response data
-            NSString *responseData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            completion(responseData);
+            responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            dispatch_semaphore_signal(semaphore);
         }
     }];
     
     // Start the data task
     [dataTask resume];
-     */
-    
-    // Send the synchronous request
-    NSHTTPURLResponse *response = nil;
-    NSError *error = nil;
-    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    // Check for errors
-    if (error != nil) {
-        NSLog(@"Error: %@", error);
-        return nil;
-    }
-    
-    // Convert the response data to an NSString
-    NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
     // Return the response string
     return responseString;
 }
 
-- (SealdSsksBackendChallengeResponse*) challengeSendWithUserId:(NSString*)userId
-                                                    authFactor:(SealdSsksAuthFactor*)authFactor
-                                                    createUser:(bool)createUser
-                                                     forceAuth:(bool)forceAuth
+- (SealdSsksBackendChallengeResponse*) challengeSendWithUserId:(const NSString*)userId
+                                                    authFactor:(const SealdSsksAuthFactor*)authFactor
+                                                    createUser:(const bool)createUser
+                                                     forceAuth:(const bool)forceAuth
                                                          error:(NSError**)error {
     
     NSDictionary *auth = @{
@@ -103,7 +90,7 @@
 
     id json = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:error];
     if (*error) {
-        NSLog(@"Error parsing JSON data: %@", error);
+        NSLog(@"Error parsing JSON data: %@", [*error localizedDescription]);
         return nil;
     }
 

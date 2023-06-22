@@ -13,13 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DemoAppJWTBuilder : NSObject
 
-@property (nonatomic, copy, readonly) NSString* JWTSharedSecretId;
-@property (nonatomic, copy, readonly) NSString* JWTSharedSecret;
+@property (nonatomic, copy, readonly) const NSString* JWTSharedSecretId;
+@property (nonatomic, copy, readonly) const NSString* JWTSharedSecret;
 @property (nonatomic, copy, readonly) id<JWTAlgorithm> JWTAlgorithm;
 
-- (instancetype)initWithJWTSharedSecretId:(NSString *)JWTSharedSecretId JWTSharedSecret:(NSString *)JWTSharedSecret;
+- (instancetype)initWithJWTSharedSecretId:(const NSString *)JWTSharedSecretId JWTSharedSecret:(const NSString *)JWTSharedSecret;
 - (NSString *)signupJWT;
-- (NSString *)connectorJWTWithCustomUserId:(NSString *)customUserId appId:(NSString *)appId;
+- (NSString *)connectorJWTWithCustomUserId:(const NSString *)customUserId appId:(const NSString *)appId;
 
 @end
 
