@@ -36,6 +36,10 @@ NSData* randomData(int len) {
     return randomData;
 }
 
+// In ObjC, these tests will all use synchronous variants of the methods,
+// in order to be more readable.
+// Async variants of all methods, with `completionHandler`s, also exist.
+
 BOOL testSealdSsksTMR(const SealdCredentials* sealdCredentials)
 {
     @try {
