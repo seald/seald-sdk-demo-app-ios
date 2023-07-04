@@ -10,7 +10,10 @@
 
 @interface SEALDSDKAppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UIWindow* window;
+@property (strong, nonatomic) NSString* testSdkLabel;
+@property (strong, nonatomic) NSString* testSsksPasswordLabel;
+@property (strong, nonatomic) NSString* testSsksTmrLabel;
 
 @end
 
