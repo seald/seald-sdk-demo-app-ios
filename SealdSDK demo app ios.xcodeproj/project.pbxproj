@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		277BE14C29BB6EE500F1F346 /* JWTBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 277BE14B29BB6EE500F1F346 /* JWTBuilder.m */; };
+		2795231329FBEF78002236FF /* ssksBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 2795231229FBEF78002236FF /* ssksBackend.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -40,6 +41,8 @@
 /* Begin PBXFileReference section */
 		277BE14A29BB6ED100F1F346 /* JWTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JWTBuilder.h; sourceTree = "<group>"; };
 		277BE14B29BB6EE500F1F346 /* JWTBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JWTBuilder.m; sourceTree = "<group>"; };
+		2795231129FBEF5E002236FF /* ssksBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ssksBackend.h; sourceTree = "<group>"; };
+		2795231229FBEF78002236FF /* ssksBackend.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ssksBackend.m; sourceTree = "<group>"; };
 		31F40D85F44EAB624FE2FA4C /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		399C28233C2B6AAD178C84D7 /* Pods-SealdSDK_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SealdSDK_Example.release.xcconfig"; path = "Target Support Files/Pods-SealdSDK_Example/Pods-SealdSDK_Example.release.xcconfig"; sourceTree = "<group>"; };
 		3F38E47F3F974C5C0C9A62F3 /* Pods_SealdSDK_demo_app_ios_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SealdSDK_demo_app_ios_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +159,8 @@
 		6003F593195388D20070C39A /* Example for SealdSDK */ = {
 			isa = PBXGroup;
 			children = (
+				2795231129FBEF5E002236FF /* ssksBackend.h */,
+				2795231229FBEF78002236FF /* ssksBackend.m */,
 				277BE14B29BB6EE500F1F346 /* JWTBuilder.m */,
 				277BE14A29BB6ED100F1F346 /* JWTBuilder.h */,
 				6003F59C195388D20070C39A /* SEALDSDKAppDelegate.h */,
@@ -405,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* SEALDSDKAppDelegate.m in Sources */,
+				2795231329FBEF78002236FF /* ssksBackend.m in Sources */,
 				6003F5A7195388D20070C39A /* SEALDSDKViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				277BE14C29BB6EE500F1F346 /* JWTBuilder.m in Sources */,
