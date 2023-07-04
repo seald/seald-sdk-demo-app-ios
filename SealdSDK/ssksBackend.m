@@ -11,9 +11,10 @@
 #import "ssksBackend.h"
 
 @implementation DemoAppSsksBackend
-- (instancetype)initWithSsksURL:(const NSString *)ssksURL
-                          AppId:(const NSString *)appId
-                         AppKey:(const NSString *)appKey {
+- (instancetype)initWithSsksURL:(const NSString*)ssksURL
+                          AppId:(const NSString*)appId
+                         AppKey:(const NSString*)appKey
+{
     if (self = [super init]) {
         _ssksURL = (NSString*) ssksURL;
         _appId = (NSString*) appId;
@@ -22,10 +23,13 @@
     return self;
 }
 
-- (NSString *)postAPIWithURL:(NSString *)endpoint data:(NSData *)data {
+- (NSString *)postAPIWithURL:(NSString*)endpoint
+                        data:(NSData*)data
+                       error:(NSError**)error
+{
     NSString* fullURL = [NSString stringWithFormat:@"%@%@", _ssksURL, endpoint];
     // Create a mutable URL request
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:fullURL]];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:fullURL]];
     
     // Set the request method to POST
     [request setHTTPMethod:@"POST"];
@@ -42,18 +46,21 @@
     [request setHTTPBody:data];
     
     // Create a session configuration
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSessionConfiguration* configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
     // Create a session using the configuration
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:configuration];
     
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     // Create a data task with the request
-    __block NSString *responseString;
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
+    __block NSString* responseString = NULL;
+    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response, NSError* _Nullable err) {
+        if (err) {
             // Handle the error
-            NSLog(@"Error: %@", error);
+            NSLog(@"Error in HTTP request: %@", err);
+            *error = err;
+            dispatch_semaphore_signal(semaphore);
+            return;
         } else {
             // Handle the response data
             responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -65,6 +72,10 @@
     [dataTask resume];
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
+    if (*error) {
+        return nil;
+    }
+
     // Return the response string
     return responseString;
 }
@@ -73,7 +84,8 @@
                                                     authFactor:(const SealdSsksAuthFactor*)authFactor
                                                     createUser:(const bool)createUser
                                                      forceAuth:(const bool)forceAuth
-                                                         error:(NSError**)error {
+                                                         error:(NSError**)error
+{
     
     NSDictionary *auth = @{
         @"type": authFactor.type,
@@ -81,11 +93,22 @@
     };
     NSDictionary *parameters = @{@"user_id": @"userId",
                                  @"auth_factor": auth,
-                                 @"create_user": @YES,
-                                 @"force_auth": @YES};
-    NSData *data = [NSJSONSerialization dataWithJSONObject:parameters options:NSJSONWritingPrettyPrinted error:nil];
+                                 @"create_user": @(createUser),
+                                 @"force_auth": @(forceAuth)};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:parameters options:NSJSONWritingPrettyPrinted error:error];
+    if (*error) {
+        NSLog(@"Error in JSON serialization: %@", [*error localizedDescription]);
+        return nil;
+    }
     
-    NSString *responseString = [self postAPIWithURL:@"tmr/back/challenge_send/" data:data];
+    NSLog(@"Request data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+
+    NSString *responseString = [self postAPIWithURL:@"tmr/back/challenge_send/" data:data error:error];
+    if (*error) {
+        NSLog(@"Error in HTTP request: %@", [*error localizedDescription]);
+        return nil;
+    }
+    
     NSLog(@"Response data: %@", responseString);
 
     id json = [NSJSONSerialization JSONObjectWithData:[responseString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:error];
@@ -100,7 +123,7 @@
 
     SealdSsksBackendChallengeResponse *r = [[SealdSsksBackendChallengeResponse alloc]
                                             initWithSessionId:[jsonDictionary objectForKey:@"session_id"]
-                                            mustAuthenticate:[jsonDictionary objectForKey:@"must_authenticate"]];
+                                            mustAuthenticate:[[jsonDictionary objectForKey:@"must_authenticate"] boolValue]];
     return r;
 }
 
@@ -108,7 +131,8 @@
 
 @implementation SealdSsksBackendChallengeResponse
 - (instancetype)initWithSessionId:(NSString *)sessionId
-                          mustAuthenticate:(BOOL)mustAuthenticate {
+                          mustAuthenticate:(BOOL)mustAuthenticate
+{
     if (self = [super init]) {
         _sessionId = sessionId;
         _mustAuthenticate = mustAuthenticate;
