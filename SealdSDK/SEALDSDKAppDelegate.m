@@ -149,8 +149,7 @@ BOOL testSealdSsksPassword(const SealdCredentials* sealdCredentials)
         // The previous password does not work anymore
         NSData* retrieveRespFail = [ssksPassword retrieveIdentityWithUserId:userId password:userPassword error:&error];
         NSCAssert(error != nil, @"expected error");
-        NSRange range = [error.localizedDescription rangeOfString:@"ssks password cannot find identity with this id/password combination"];
-        NSCAssert(range.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"code"]  isEqualToString:@"SSKSPASSWORD_CANNOT_FIND_IDENTITY"], @"invalid error");
         NSCAssert(retrieveRespFail == nil, @"unexpected identity");
         error = nil;
         
@@ -179,8 +178,7 @@ BOOL testSealdSsksPassword(const SealdCredentials* sealdCredentials)
         
         NSData* retrieveEmptyIdentity = [ssksPassword retrieveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey error:&error];
         NSCAssert(error != nil, @"expected error");
-        NSRange range2 = [error.localizedDescription rangeOfString:@"ssks password cannot find identity with this id/password combination"];
-        NSCAssert(range2.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"code"]  isEqualToString:@"SSKSPASSWORD_CANNOT_FIND_IDENTITY"], @"invalid error");
         NSCAssert(retrieveEmptyIdentity == nil, @"unexpected identity");
         error = nil;
         
@@ -320,8 +318,7 @@ BOOL testSealdSDKWithCredentials(const SealdCredentials* sealdCredentials, const
         // user3 still has the encryption session in its cache, but we can disable it.
         [sdk3 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:YES error:&error];
         NSCAssert(error != nil, @"expected error");
-        NSRange range = [error.localizedDescription rangeOfString:@"status: 404"];
-        NSCAssert(range.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"status"]  isEqualToNumber:@404], @"invalid error");
         error = nil;
         
         // user2 adds user3 as recipient of the encryption session.
@@ -346,8 +343,7 @@ BOOL testSealdSDKWithCredentials(const SealdCredentials* sealdCredentials, const
         // user3 cannot retrieve the session anymore
         [sdk3 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:NO error:&error];
         NSCAssert(error != nil, @"expected error");
-        range = [error.localizedDescription rangeOfString:@"status: 404"];
-        NSCAssert(range.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"status"]  isEqualToNumber:@404], @"invalid error");
         error = nil;
         
         // user1 revokes all other recipients from the session
@@ -361,8 +357,7 @@ BOOL testSealdSDKWithCredentials(const SealdCredentials* sealdCredentials, const
         // user2 cannot retrieve the session anymore
         [sdk2 retrieveEncryptionSessionFromMessage:encryptedMessage useCache:NO error:&error];
         NSCAssert(error != nil, @"expected error");
-        range = [error.localizedDescription rangeOfString:@"status: 404"];
-        NSCAssert(range.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"status"]  isEqualToNumber:@404], @"invalid error");
         error = nil;
         
         // user1 revokes all. It can no longer retrieve it.
@@ -372,8 +367,7 @@ BOOL testSealdSDKWithCredentials(const SealdCredentials* sealdCredentials, const
         
         [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:@NO error:&error];
         NSCAssert(error != nil, @"expected error");
-        range = [error.localizedDescription rangeOfString:@"status: 404"];
-        NSCAssert(range.location != NSNotFound, @"invalid error");
+        NSCAssert([error.userInfo[@"status"]  isEqualToNumber:@404], @"invalid error");
         error = nil;
         
         // Create additional data for user1
