@@ -14,7 +14,6 @@
 @property (strong, nonatomic) NSString* testSdkLabel;
 @property (strong, nonatomic) NSString* testSsksPasswordLabel;
 @property (strong, nonatomic) NSString* testSsksTmrLabel;
-
 @end
 
 typedef struct {

@@ -10,7 +10,7 @@
 #import <JWT/JWT.h>
 #import "JWTBuilder.h"
 
-typedef NS_ENUM(NSInteger, JWTPermission) {
+typedef NS_ENUM (NSInteger, JWTPermission) {
     ALL = -1,
     ANONYMOUS_CREATE_MESSAGE = 0,
     ANONYMOUS_FIND_KEY = 1,
@@ -20,8 +20,8 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
 };
 
 @implementation DemoAppJWTBuilder
-- (instancetype)initWithJWTSharedSecretId:(const NSString*)JWTSharedSecretId
-                          JWTSharedSecret:(const NSString*)JWTSharedSecret
+- (instancetype) initWithJWTSharedSecretId:(const NSString*)JWTSharedSecretId
+                           JWTSharedSecret:(const NSString*)JWTSharedSecret
 {
     if (self = [super init]) {
         _JWTSharedSecretId = JWTSharedSecretId;
@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
     return self;
 }
 
-- (NSString*)signupJWT
+- (NSString*) signupJWT
 {
     NSDate* now = [NSDate date];
     NSDictionary* headers = @{@"alg" : @"HS256", @"typ" : @"JWT"};
@@ -39,16 +39,15 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
                               @"scopes": @(JOIN_TEAM),
                               @"jti" : [[NSUUID UUID] UUIDString],
                               @"iss" : _JWTSharedSecretId,
-                              @"iat" : @((NSInteger)now.timeIntervalSince1970)
-    };
+                              @"iat" : @((NSInteger)now.timeIntervalSince1970)};
 
-    NSString* token = [JWT encodePayload:payload].headers(headers).secret((NSString*) _JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
+    NSString* token = [JWT encodePayload:payload].headers(headers).secret((NSString*)_JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
 
     return token;
 }
 
-- (NSString*)connectorJWTWithCustomUserId:(const NSString*)customUserId
-                                    appId:(const NSString*)appId
+- (NSString*) connectorJWTWithCustomUserId:(const NSString*)customUserId
+                                     appId:(const NSString*)appId
 {
     NSDate* now = [NSDate date];
 
@@ -57,11 +56,9 @@ typedef NS_ENUM(NSInteger, JWTPermission) {
                               @"connector_add": @{@"type": @"AP", @"value": [NSString stringWithFormat:@"%@@%@", customUserId, appId]},
                               @"jti" : [[NSUUID UUID] UUIDString],
                               @"iss" : _JWTSharedSecretId,
-                              @"iat" : @((NSInteger)now.timeIntervalSince1970)
-    };
-    NSString* token = [JWT encodePayload:payload].headers(headers).secret((NSString*) _JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
+                              @"iat" : @((NSInteger)now.timeIntervalSince1970)};
+    NSString* token = [JWT encodePayload:payload].headers(headers).secret((NSString*)_JWTSharedSecret).algorithm(_JWTAlgorithm).encode;
 
     return token;
 }
-
 @end

@@ -2,23 +2,26 @@ PODS:
   - Base64 (1.1.2)
   - JWT (3.0.0-beta.3):
     - Base64 (~> 1.1.2)
-  - SealdSdk (0.3.0-beta.0)
+  - SealdSdk (0.0.1-local)
 
 DEPENDENCIES:
   - JWT (= 3.0.0-beta.3)
-  - SealdSdk (= 0.3.0-beta.0)
+  - SealdSdk (from `../`)
 
 SPEC REPOS:
   trunk:
     - Base64
     - JWT
-    - SealdSdk
+
+EXTERNAL SOURCES:
+  SealdSdk:
+    :path: "../"
 
 SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   JWT: a2e44b0d2273e28ae68cec30e95d3d460c76c298
-  SealdSdk: a10f55e0f598a5acb277e0888f55dbefea418bef
+  SealdSdk: 5101d18f5eac808c677211eef4f2bef32297987d
 
-PODFILE CHECKSUM: 513d0b0f4bb9d9a2bfe371b1779c0c878a264f22
+PODFILE CHECKSUM: 1ea096baeaaa3910d63c2568265cf131e7874a55
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

@@ -10,17 +10,16 @@
 #import "SEALDSDKAppDelegate.h"
 
 @interface SEALDSDKViewController ()
-
 @end
 
 @implementation SEALDSDKViewController
 
-- (void)viewDidLoad
+- (void) viewDidLoad
 {
     [super viewDidLoad];
-    
+
     SEALDSDKAppDelegate* appDelegate = (SEALDSDKAppDelegate*)[[UIApplication sharedApplication] delegate];
-    
+
     [appDelegate addObserver:self forKeyPath:@"testSsksTmrLabel" options:NSKeyValueObservingOptionNew context:nil];
     [appDelegate addObserver:self forKeyPath:@"testSsksPasswordLabel" options:NSKeyValueObservingOptionNew context:nil];
     [appDelegate addObserver:self forKeyPath:@"testSdkLabel" options:NSKeyValueObservingOptionNew context:nil];
@@ -29,10 +28,10 @@
     self.testSdkLabel.text = [NSString stringWithFormat:@"test SDK: %@", appDelegate.testSdkLabel];
 }
 
-- (void)observeValueForKeyPath:(NSString*)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey,id>*)change
-                       context:(void*)context
+- (void) observeValueForKeyPath:(NSString*)keyPath
+                       ofObject:(id)object
+                         change:(NSDictionary<NSKeyValueChangeKey,id>*)change
+                        context:(void*)context
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString* newStatus = [change objectForKey:NSKeyValueChangeNewKey];
@@ -41,14 +40,14 @@
         } else if ([keyPath isEqualToString:@"testSsksPasswordLabel"]) {
             NSString* newStatus = [change objectForKey:NSKeyValueChangeNewKey];
             self.testSsksPasswordLabel.text = [NSString stringWithFormat:@"test SSKS Password: %@", newStatus];;
-        } else if ([keyPath isEqualToString:@"tesSdkLabel"]) {
+        } else if ([keyPath isEqualToString:@"testSdkLabel"]) {
             NSString* newStatus = [change objectForKey:NSKeyValueChangeNewKey];
             self.testSdkLabel.text = [NSString stringWithFormat:@"test SDK: %@", newStatus];
         }
     });
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     SEALDSDKAppDelegate* appDelegate = (SEALDSDKAppDelegate*)[[UIApplication sharedApplication] delegate];
     [appDelegate removeObserver:self forKeyPath:@"testSsksTmrLabel"];
@@ -56,4 +55,3 @@
     [appDelegate removeObserver:self forKeyPath:@"testSdkLabel"];
 }
 @end
-

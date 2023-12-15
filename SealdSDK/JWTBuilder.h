@@ -17,12 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) const NSString* JWTSharedSecret;
 @property (nonatomic, copy, readonly) id<JWTAlgorithm> JWTAlgorithm;
 
-- (instancetype)initWithJWTSharedSecretId:(const NSString*)JWTSharedSecretId
-                          JWTSharedSecret:(const NSString*)JWTSharedSecret;
-- (NSString*)signupJWT;
-- (NSString*)connectorJWTWithCustomUserId:(const NSString*)customUserId
-                                    appId:(const NSString*)appId;
-
+- (instancetype) initWithJWTSharedSecretId:(const NSString*)JWTSharedSecretId
+                           JWTSharedSecret:(const NSString*)JWTSharedSecret;
+- (NSString*) signupJWT;
+- (NSString*) connectorJWTWithCustomUserId:(const NSString*)customUserId
+                                     appId:(const NSString*)appId;
 @end
 
 NS_ASSUME_NONNULL_END
