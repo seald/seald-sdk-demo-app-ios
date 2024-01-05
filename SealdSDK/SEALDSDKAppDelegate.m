@@ -303,6 +303,7 @@ BOOL testSealdSDKWithCredentials(const SealdCredentials* sealdCredentials, const
 
         // Encrypt the test file. Resulting file will be written alongside the source file, with `.seald` extension added
         NSString* encryptedFileURI = [es1SDK1 encryptFileFromURI:filePath error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
 
         // User1 can retrieve the encryptionSession directly from the encrypted file
         NSString* es1SDK1FromFileId = [SealdUtils parseSessionIdFromFile:encryptedFileURI error:&error];

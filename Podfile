@@ -4,7 +4,7 @@ platform :ios, '13.0'
 project 'SealdSDK demo app ios'
 
 target 'SealdSDK demo app ios_Example' do
-  pod 'SealdSdk', '0.4.0-beta.1'
+  pod 'SealdSdk', '0.4.0-beta.2'
   pod 'JWT', '3.0.0-beta.3'
 
   post_install do |installer|
