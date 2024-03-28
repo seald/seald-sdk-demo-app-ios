@@ -54,11 +54,12 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     // Create a data task with the request
     __block NSString* responseString = NULL;
+    __block NSError* tempError = NULL; // This is to avoid an autorelease problem
     NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData*_Nullable data, NSURLResponse*_Nullable response, NSError*_Nullable err) {
         if (err) {
             // Handle the error
             NSLog(@"Error in HTTP request: %@", err);
-            *error = err;
+            tempError = err;
             dispatch_semaphore_signal(semaphore);
             return;
         } else {
@@ -72,7 +73,8 @@
     [dataTask resume];
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
-    if (*error) {
+    if (tempError) {
+        *error = tempError;
         return nil;
     }
 
@@ -81,9 +83,10 @@
 }
 
 - (SealdSsksBackendChallengeResponse*) challengeSendWithUserId:(const NSString*)userId
-                                                    authFactor:(const SealdSsksAuthFactor*)authFactor
+                                                    authFactor:(const SealdTmrAuthFactor*)authFactor
                                                     createUser:(const bool)createUser
                                                      forceAuth:(const bool)forceAuth
+                                                       fakeOtp:(const BOOL)fakeOtp
                                                          error:(NSError**)error
 {
 
@@ -91,10 +94,13 @@
         @"type": authFactor.type,
         @"value": authFactor.value
     };
-    NSDictionary* parameters = @{@"user_id": @"userId",
-                                 @"auth_factor": auth,
-                                 @"create_user": @(createUser),
-                                 @"force_auth": @(forceAuth)};
+    NSDictionary* parameters = @{
+        @"user_id": @"userId",
+        @"auth_factor": auth,
+        @"create_user": @(createUser),
+        @"force_auth": @(forceAuth),
+        @"fake_otp": @(fakeOtp),
+    };
     NSData* data = [NSJSONSerialization dataWithJSONObject:parameters options:NSJSONWritingPrettyPrinted error:error];
     if (*error) {
         NSLog(@"Error in JSON serialization: %@", [* error localizedDescription]);

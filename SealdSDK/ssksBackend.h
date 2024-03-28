@@ -9,6 +9,8 @@
 #ifndef SsksBackend_h
 #define SsksBackend_h
 
+#import "Helpers.h"
+
 @interface SealdSsksBackendChallengeResponse : NSObject
 
 @property (nonatomic, readonly) NSString* sessionId;
@@ -33,9 +35,10 @@
                        error:(NSError**)error;
 
 - (SealdSsksBackendChallengeResponse*) challengeSendWithUserId:(const NSString*)userId
-                                                    authFactor:(const SealdSsksAuthFactor*)authFactor
+                                                    authFactor:(const SealdTmrAuthFactor*)authFactor
                                                     createUser:(const BOOL)createUser
                                                      forceAuth:(const BOOL)forceAuth
+                                                       fakeOtp:(const BOOL)fakeOtp
                                                          error:(NSError**)error;
 @end
 
