@@ -47,18 +47,25 @@ BOOL testSealdSsksTMR(void)
     @try {
         NSError* error = nil;
 
-        NSData* rawTMRKey = randomData(64);
+        // rawTMRSymKey is a secret, generated and stored by your _backend_, unique for the user.
+        // It can be retrieved by client-side when authenticated (usually as part of signup/sign-in call response).
+        // This *MUST* be a cryptographically random NSData of 64 bytes.
+        NSData* rawTMRSymKey = randomData(64);
 
         DemoAppSsksBackend* ssksBackend = [[DemoAppSsksBackend alloc] initWithSsksURL:sealdCredentials.ssksURL AppId:sealdCredentials.appId AppKey:sealdCredentials.ssksBackendAppKey];
 
-        // Simulating a Seald identity with random data, for a simpler example.
+        // First, we need to simulate a user. For a simpler example, we will use random data.
+        // userId is the ID of the user in your app.
         NSString* rand = randomString(10);
         NSString* userId = [NSString stringWithFormat:@"user-%@", rand];
-        NSString* userEM = [NSString stringWithFormat:@"user-%@@test.com", rand];
+        // userIdentity is the user's exported identity that you want to store on SSKS
         NSData* userIdentity = randomData(64); // should be: [sealdSDKInstance exportIdentity]
 
         SealdSsksTMRPlugin* ssksTMR = [[SealdSsksTMRPlugin alloc] initWithSsksURL:sealdCredentials.ssksURL appId:sealdCredentials.appId instanceName:@"SsksTmr" logLevel:-1 logNoColor:YES];
 
+        // Define an AuthFactor: the user's email address.
+        // AuthFactor can be an email `AuthFactorType.EM` or a phone number `AuthFactorType.SMS`
+        NSString* userEM = [NSString stringWithFormat:@"user-%@@test.com", rand];
         SealdTmrAuthFactor* authFactor = [[SealdTmrAuthFactor alloc] initWithValue:userEM type:@"EM"];
 
         // The app backend creates a session to save the identity.
@@ -74,7 +81,13 @@ BOOL testSealdSsksTMR(void)
         NSCAssert(authSessionSave.mustAuthenticate == NO, @"unexpected mustAuthenticate value 1");
 
         // Saving the identity. No challenge necessary because `must_authenticate` is false.
-        [ssksTMR saveIdentity:authSessionSave.sessionId authFactor:authFactor challenge:@"" rawTMRSymKey:rawTMRKey identity:userIdentity error:&error];
+        SealdSsksSaveIdentityResponse* saveIdentityRes1 = [ssksTMR saveIdentity:authSessionSave.sessionId
+                                                                     authFactor:authFactor
+                                                                   rawTMRSymKey:rawTMRSymKey
+                                                                       identity:userIdentity
+                                                                          error:&error];
+        NSCAssert(![saveIdentityRes1.ssksId isEqualToString:@""], @"saveIdentityRes1.ssksId empty");
+        NSCAssert(saveIdentityRes1.authenticatedSessionId == nil, @"saveIdentityRes1.authenticatedSessionId not nil");
 
         // The app backend creates another session to retrieve the identity.
         // The identity is already saved, so `must_authenticate` is true.
@@ -89,7 +102,12 @@ BOOL testSealdSsksTMR(void)
         NSCAssert(authSessionRetrieve.mustAuthenticate == YES, @"unexpected mustAuthenticate value 2");
 
         // Retrieving identity. Challenge is necessary for this.
-        SealdSsksRetrieveIdentityResponse* retrieveResp = [ssksTMR retrieveIdentity:authSessionRetrieve.sessionId authFactor:authFactor challenge:sealdCredentials.ssksTMRChallenge rawTMRSymKey:rawTMRKey error:&error]; // on this test server, the challenge is fixed. In an actual app, this will be the challenge recieved by the user by email or SMS.
+        SealdSsksRetrieveIdentityResponse* retrieveResp = [ssksTMR retrieveIdentity:authSessionRetrieve.sessionId
+                                                                         authFactor:authFactor
+                                                                       rawTMRSymKey:rawTMRSymKey
+                                                           // on this test server, the challenge is fixed. In an actual app, this will be the challenge recieved by the user by email or SMS.
+                                                                          challenge:sealdCredentials.ssksTMRChallenge
+                                                                              error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert([userIdentity isEqualToData:retrieveResp.identity], @"invalid retrieved identity TMR1");
         NSCAssert(retrieveResp.shouldRenewKey == YES, @"invalid should renew key value 1");
@@ -99,8 +117,17 @@ BOOL testSealdSsksTMR(void)
 
         // Let's simulate the renew with another random identity
         NSData* identitySecondKey = randomData(64); // should be: [sealdSDKInstance exportIdentity]
-        [ssksTMR saveIdentity:retrieveResp.authenticatedSessionId authFactor:authFactor challenge:@"" rawTMRSymKey:rawTMRKey identity:identitySecondKey error:&error]; // to save the newly renewed identity on the server, you can use the `authenticatedSessionId` from the response to `retrieveIdentity`, with no challenge
+        // to save the newly renewed identity on the server, you can use the `authenticatedSessionId` from the response to `retrieveIdentity`, with no challenge
+        [ssksTMR saveIdentity:retrieveResp.authenticatedSessionId authFactor:authFactor rawTMRSymKey:rawTMRSymKey identity:identitySecondKey challenge:@"" error:&error];
+        // to save the newly renewed identity on the server, you can use the `authenticatedSessionId` from the response to `retrieveIdentity`, with no challenge
+        SealdSsksSaveIdentityResponse* saveIdentityRes2 = [ssksTMR saveIdentity:retrieveResp.authenticatedSessionId
+                                                                     authFactor:authFactor
+                                                                   rawTMRSymKey:rawTMRSymKey
+                                                                       identity:identitySecondKey
+                                                                          error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert([saveIdentityRes2.ssksId isEqualToString:saveIdentityRes1.ssksId], @"saveIdentityRes2.ssksId different from saveIdentityRes1.ssksId");
+        NSCAssert(saveIdentityRes2.authenticatedSessionId == nil, @"saveIdentityRes2.authenticatedSessionId not nil");
 
         // And now let's retrieve this new saved identity
         SealdSsksBackendChallengeResponse* authSessionRetrieve2 =
@@ -112,7 +139,11 @@ BOOL testSealdSsksTMR(void)
                                            error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(authSessionRetrieve2.mustAuthenticate == YES, @"unexpected mustAuthenticate value 3");
-        SealdSsksRetrieveIdentityResponse* retrieveResp2 = [ssksTMR retrieveIdentity:authSessionRetrieve2.sessionId authFactor:authFactor challenge:sealdCredentials.ssksTMRChallenge rawTMRSymKey:rawTMRKey error:&error];
+        SealdSsksRetrieveIdentityResponse* retrieveResp2 = [ssksTMR retrieveIdentity:authSessionRetrieve2.sessionId
+                                                                          authFactor:authFactor
+                                                                        rawTMRSymKey:rawTMRSymKey
+                                                                           challenge:sealdCredentials.ssksTMRChallenge
+                                                                               error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert([identitySecondKey isEqualToData:retrieveResp2.identity], @"invalid retrieved identity TMR2");
         NSCAssert(retrieveResp2.shouldRenewKey == NO, @"invalid should renew key value 2"); // this time, the identity was saved with a challenge : no need to renew
@@ -128,7 +159,11 @@ BOOL testSealdSsksTMR(void)
                                            error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(authSessionRetrieve2.mustAuthenticate == YES, @"unexpected mustAuthenticate value 4");
-        SealdSsksRetrieveIdentityResponse* retrieveResp3 = [ssksTMR2 retrieveIdentity:authSessionRetrieve3.sessionId authFactor:authFactor challenge:sealdCredentials.ssksTMRChallenge rawTMRSymKey:rawTMRKey error:&error];
+        SealdSsksRetrieveIdentityResponse* retrieveResp3 = [ssksTMR2 retrieveIdentity:authSessionRetrieve3.sessionId
+                                                                           authFactor:authFactor
+                                                                         rawTMRSymKey:rawTMRSymKey
+                                                                            challenge:sealdCredentials.ssksTMRChallenge
+                                                                                error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert([identitySecondKey isEqualToData:retrieveResp3.identity], @"invalid retrieved identity TMR3");
         NSCAssert(retrieveResp2.shouldRenewKey == NO, @"invalid should renew key value 3");
@@ -159,8 +194,9 @@ BOOL testSealdSsksPassword(void)
         NSString* userPassword = randomString(10);
 
         // Saving the identity with a password
-        [ssksPassword saveIdentityWithUserId:userId password:userPassword identity:userIdentity error:&error];
+        NSString* ssksId1 = [ssksPassword saveIdentityWithUserId:userId password:userPassword identity:userIdentity error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert(![ssksId1 isEqualToString:@""], @"ssksId1 empty");
 
         // Retrieving the identity with the password
         NSData* retrieveResp = [ssksPassword retrieveIdentityWithUserId:userId password:userPassword error:&error];
@@ -169,8 +205,9 @@ BOOL testSealdSsksPassword(void)
 
         // Changing the password
         NSString* newPassword = @"a new password";
-        [ssksPassword changeIdentityPasswordWithUserId:userId currentPassword:userPassword newPassword:newPassword error:&error];
+        NSString* ssksId1b = [ssksPassword changeIdentityPasswordWithUserId:userId currentPassword:userPassword newPassword:newPassword error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert(![ssksId1b isEqualToString:ssksId1], @"ssksId1b equals ssksId1");
 
         // The previous password does not work anymore
         NSData* retrieveRespFail = [ssksPassword retrieveIdentityWithUserId:userId password:userPassword error:&error];
@@ -189,8 +226,9 @@ BOOL testSealdSsksPassword(void)
         NSData* rawEncryptionKey = randomData(64);
 
         // Saving identity with raw keys
-        [ssksPassword saveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey identity:userIdentity error:&error];
+        NSString* ssksId2 = [ssksPassword saveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey identity:userIdentity error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert(![ssksId2 isEqualToString:@""], @"ssksId2 empty");
 
         // Retrieving the identity with raw keys
         NSData* retrieveIdentityRawKeys = [ssksPassword retrieveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey error:&error];
@@ -199,8 +237,9 @@ BOOL testSealdSsksPassword(void)
 
         // Deleting the identity by saving an empty `Data`
         NSData* emptyData = [NSData data];
-        [ssksPassword saveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey identity:emptyData error:&error];
+        NSString* ssksId2b = [ssksPassword saveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey identity:emptyData error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert([ssksId2b isEqualToString:ssksId2], @"ssksId2b different from ssksId2");
 
         NSData* retrieveEmptyIdentity = [ssksPassword retrieveIdentityWithUserId:userId rawStorageKey:rawStorageKey rawEncryptionKey:rawEncryptionKey error:&error];
         NSCAssert(error != nil, @"expected error");
@@ -225,11 +264,11 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
 
         // The Seald SDK uses a local database that will persist on disk.
         // When instantiating a SealdSDK, it is highly recommended to set a symmetric key to encrypt this database.
-        // This demo will use a fixed key.
         // In an actual app, it should be generated at signup,
         // either on the server and retrieved from your backend at login,
         // or on the client-side directly and stored in the system's keychain.
-        NSString* databaseEncryptionKeyB64 = @"V4olGDOE5bAWNa9HDCvOACvZ59hUSUdKmpuZNyl1eJQnWKs5/l+PGnKUv4mKjivL3BtU014uRAIF2sOl83o6vQ";
+        // WARNING: This should be a cryptographically random buffer of 64 bytes. This random generation is NOT good enough.
+        NSData* databaseEncryptionKey = randomData(64);
 
         // Seald uses JWT to manage licenses and identity.
         // JWTs should be generated by your backend, and sent to the user at signup.
@@ -240,22 +279,22 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         DemoAppJWTBuilder* jwtbuilder = [[DemoAppJWTBuilder alloc] initWithJWTSharedSecretId:sealdCredentials.JWTSharedSecretId JWTSharedSecret:sealdCredentials.JWTSharedSecret];
 
         // let's instantiate 3 SealdSDK. They will correspond to 3 users that will exchange messages.
-        SealdSdk* sdk1 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId dbPath:[NSString stringWithFormat:@"%@/inst1", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"User1" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
+        SealdSdk* sdk1 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId databasePath:[NSString stringWithFormat:@"%@/inst1", sealdDir] databaseEncryptionKey:databaseEncryptionKey instanceName:@"User1" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
-        SealdSdk* sdk2 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId dbPath:[NSString stringWithFormat:@"%@/inst2", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"User2" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
+        SealdSdk* sdk2 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId databasePath:[NSString stringWithFormat:@"%@/inst2", sealdDir] databaseEncryptionKey:databaseEncryptionKey instanceName:@"User2" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
-        SealdSdk* sdk3 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId dbPath:[NSString stringWithFormat:@"%@/inst3", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"User3" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
+        SealdSdk* sdk3 = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId databasePath:[NSString stringWithFormat:@"%@/inst3", sealdDir] databaseEncryptionKey:databaseEncryptionKey instanceName:@"User3" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         SealdAccountInfo* retrieveNoAccount = [sdk1 getCurrentAccountInfo];
         NSCAssert(retrieveNoAccount == nil, @"retrieveNoAccount not nil");
 
         // Create the 3 accounts. Again, the signupJWT should be generated by your backend
-        SealdAccountInfo* user1AccountInfo = [sdk1 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser1" displayName:@"User1" expireAfter:0 error:&error];
+        SealdAccountInfo* user1AccountInfo = [sdk1 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser1" displayName:@"User1" privateKeys:nil expireAfter:0 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
-        SealdAccountInfo* user2AccountInfo = [sdk2 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser2" displayName:@"User2" expireAfter:0 error:&error];
+        SealdAccountInfo* user2AccountInfo = [sdk2 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser2" displayName:@"User2" privateKeys:nil expireAfter:0 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
-        SealdAccountInfo* user3AccountInfo = [sdk3 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser3" displayName:@"User3" expireAfter:0 error:&error];
+        SealdAccountInfo* user3AccountInfo = [sdk3 createAccountWithSignupJwt:[jwtbuilder signupJWT] deviceName:@"deviceNameUser3" displayName:@"User3" privateKeys:nil expireAfter:0 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // retrieve info about current user before creating a user should return null
@@ -266,25 +305,33 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         // Create group: https://docs.seald.io/sdk/guides/5-groups.html
         NSArray<NSString*>* members = [NSArray arrayWithObject:user1AccountInfo.userId];
         NSArray<NSString*>* admins = [NSArray arrayWithObject:user1AccountInfo.userId];
-        NSString* groupId = [sdk1 createGroupWithGroupName:@"group-1" members:members admins:admins error:&error];
+        NSString* groupId = [sdk1 createGroupWithGroupName:@"group-1" members:members admins:admins privateKeys:nil error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // Manage group members and admins
-        [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user2AccountInfo.userId] adminsToSet:[NSArray new] error:&error]; // Add user2 as group member
+        [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user2AccountInfo.userId] adminsToSet:[NSArray new] privateKeys:nil error:&error]; // Add user2 as group member
         NSCAssert(error == nil, error.localizedDescription);
-        [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user3AccountInfo.userId] adminsToSet:[NSArray arrayWithObject:user3AccountInfo.userId] error:&error]; // user1 adds user3 as group member and group admin
+        [sdk1 addGroupMembersWithGroupId:groupId membersToAdd:[NSArray arrayWithObject:user3AccountInfo.userId] adminsToSet:[NSArray arrayWithObject:user3AccountInfo.userId] privateKeys:nil error:&error]; // user1 adds user3 as group member and group admin
         NSCAssert(error == nil, error.localizedDescription);
-        [sdk3 removeGroupMembersWithGroupId:groupId membersToRemove:[NSArray arrayWithObject:user2AccountInfo.userId] error:&error];
+        [sdk3 removeGroupMembersWithGroupId:groupId membersToRemove:[NSArray arrayWithObject:user2AccountInfo.userId] privateKeys:nil error:&error];
         NSCAssert(error == nil, error.localizedDescription); // user3 can remove user2
         [sdk3 setGroupAdminsWithGroupId:groupId addToAdmins:[NSArray new] removeFromAdmins:[NSArray arrayWithObject:user1AccountInfo.userId] error:&error]; // user3 can remove user1 from admins
         NSCAssert(error == nil, error.localizedDescription);
 
         // Create encryption session: https://docs.seald.io/sdk/guides/6-encryption-sessions.html
-        SealdRecipientRights* allRights = [[SealdRecipientRights alloc] initWithRead:YES forward:YES revoke:YES];
-        NSArray<SealdRecipientWithRights*>* recipients = [NSArray arrayWithObjects:[[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId rights:allRights], [[SealdRecipientWithRights alloc] initWithRecipientId:user2AccountInfo.userId rights:allRights], [[SealdRecipientWithRights alloc] initWithRecipientId:groupId rights:allRights], nil];
-        SealdEncryptionSession* es1SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipients useCache:YES error:&error]; // user1, user2, and group as recipients
+        // user1, user2, and group as recipients
+        // Default rights for the session creator (if included as recipients without RecipientRights)  read = true, forward = true, revoke = true
+        // Default rights for any other recipient:  read = true, forward = true, revoke = false
+        NSArray<SealdRecipientWithRights*>* recipients =
+            [NSArray arrayWithObjects:
+             [[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId],
+             [[SealdRecipientWithRights alloc] initWithRecipientId:user2AccountInfo.userId],
+             [[SealdRecipientWithRights alloc] initWithRecipientId:groupId], nil];
+        SealdEncryptionSession* es1SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipients useCache:YES error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(es1SDK1.retrievalDetails.flow == SealdEncryptionSessionRetrievalCreated, @"unexpected flow");
+
+        // Using two-man-rule accesses
 
         // Add TMR accesses to the session, then, retrieve the session using it.
         // Create TMR a recipient
@@ -295,15 +342,18 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         // WARNING: This should be a cryptographically random buffer of 64 bytes. This random generation is NOT good enough.
         NSData* overEncryptionKey = randomData(64);
 
-        NSArray<SealdTmrRecipientWithRights*>* tmrRecipients = [NSArray arrayWithObjects:[[SealdTmrRecipientWithRights alloc] initWithAuthFactor:tmrAuthFactor overEncryptionKey:overEncryptionKey rights:allRights], nil];
+        SealdTmrRecipientWithRights* tmrRecipient = [[SealdTmrRecipientWithRights alloc] initWithAuthFactor:tmrAuthFactor overEncryptionKey:overEncryptionKey];
 
         // Add the TMR access
-        [es1SDK1 addTmrAccess:tmrRecipients error:&error];
+        NSString* addedTMRAccessId = [es1SDK1 addTmrAccess:tmrRecipient error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert([addedTMRAccessId length] == 36, @"Expected UUID v4");
 
         // Retrieve the TMR JWT
         SealdSsksTMRPlugin* ssksTMR = [[SealdSsksTMRPlugin alloc] initWithSsksURL:sealdCredentials.ssksURL appId:sealdCredentials.appId instanceName:@"SsksTmr" logLevel:-1 logNoColor:YES];
 
+        // The app backend creates an SSKS authentication session to save the identity.
+        // This is the first time that this email is storing an identity, so `mustAuthenticate` is false.
         DemoAppSsksBackend* ssksBackend = [[DemoAppSsksBackend alloc] initWithSsksURL:sealdCredentials.ssksURL AppId:sealdCredentials.appId AppKey:sealdCredentials.ssksBackendAppKey];
         SealdSsksBackendChallengeResponse* authSession =
             [ssksBackend challengeSendWithUserId:user2AccountInfo.userId
@@ -313,19 +363,20 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
                                          fakeOtp:YES // `fakeOtp` is only on the staging server, to force the challenge to be 'aaaaaaaa'. In production, you cannot use this.
                                            error:&error];
 
-        SealdSsksGetFactorTokenResponse* jwtToken = [ssksTMR getFactorToken:authSession.sessionId
-                                                                 authFactor:tmrAuthFactor
-                                                                  challenge:sealdCredentials.ssksTMRChallenge
-                                                                      error:&error];
+        // Retrieve a JWT associated with the authentication factor from SSKS
+        SealdSsksGetFactorTokenResponse* tmrJWT = [ssksTMR getFactorToken:authSession.sessionId
+                                                               authFactor:tmrAuthFactor
+                                                                challenge:sealdCredentials.ssksTMRChallenge
+                                                                    error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // Retrieve the encryption session using the JWT
-        SealdEncryptionSession* tmrES = [sdk2 retrieveEncryptionSessionByTmr:jwtToken.token sessionId:es1SDK1.sessionId overEncryptionKey:overEncryptionKey tmrAccessesFilters:nil tryIfMultiple:YES useCache:NO error:&error];
+        SealdEncryptionSession* tmrES = [sdk2 retrieveEncryptionSessionByTmr:tmrJWT.token sessionId:es1SDK1.sessionId overEncryptionKey:overEncryptionKey tmrAccessesFilters:nil tryIfMultiple:YES useCache:NO error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(tmrES.retrievalDetails.flow == SealdEncryptionSessionRetrievalViaTmrAccess, @"unexpected flow");
 
         // Convert the TMR accesses
-        [sdk2 convertTmrAccesses:jwtToken.token overEncryptionKey:overEncryptionKey conversionFilters:nil deleteOnConvert:YES error:&error];
+        [sdk2 convertTmrAccesses:tmrJWT.token overEncryptionKey:overEncryptionKey conversionFilters:nil deleteOnConvert:YES error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // After conversion, sdk2 can retrieve the encryption session directly.
@@ -333,10 +384,13 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(classicES.retrievalDetails.flow == SealdEncryptionSessionRetrievalDirect, @"unexpected flow");
 
-        // Create proxy sessions
+        // Using proxy sessions: https://docs.seald.io/sdk/guides/proxy-sessions.html
+
+        // Create proxy sessions: user1 needs to be a recipient of this session in order
+        // to be able to add it as a proxy session
         NSArray<SealdRecipientWithRights*>* proxy1Recipients = [NSArray arrayWithObjects:
-                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId rights:allRights], // user1 needs to be a recipient of this session in order to be able to add it as a proxy session
-                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user3AccountInfo.userId rights:allRights],
+                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId], // user1 needs to be a recipient of this session in order to be able to add it as a proxy session
+                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user3AccountInfo.userId],
                                                                 nil];
         SealdEncryptionSession* proxySession1 = [sdk1 createEncryptionSessionWithRecipients:proxy1Recipients
                                                                                    useCache:YES
@@ -344,19 +398,20 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
                                                 ];
         NSCAssert(error == nil, error.localizedDescription);
 
-        [es1SDK1 addProxySession:proxySession1.sessionId rights:allRights error:&error];
+        [es1SDK1 addProxySession:proxySession1.sessionId error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         NSArray<SealdRecipientWithRights*>* proxy2Recipients = [NSArray arrayWithObjects:
-                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId rights:allRights], // user1 needs to be a recipient of this session in order to be able to add it as a proxy session
-                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user2AccountInfo.userId rights:allRights],
+                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId], // user1 needs to be a recipient of this session in order to be able to add it as a proxy session
+                                                                [[SealdRecipientWithRights alloc] initWithRecipientId:user2AccountInfo.userId],
                                                                 nil];
+        // user1 needs to be a recipient of this session in order to be able to add it as a proxy session
         SealdEncryptionSession* proxySession2 = [sdk1 createEncryptionSessionWithRecipients:proxy2Recipients
                                                                                    useCache:YES
                                                                                       error:&error
                                                 ];
         NSCAssert(error == nil, error.localizedDescription);
-        [es1SDK1 addProxySession:proxySession2.sessionId rights:allRights error:&error];
+        [es1SDK1 addProxySession:proxySession2.sessionId error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // The SealdEncryptionSession object can encrypt and decrypt for user1
@@ -444,7 +499,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert([decryptedMessageSDK3 isEqualToString:initialString], @"decryptedMessageSDK3 incorrect");
 
         // user3 removes all members of "group-1". A group without member is deleted.
-        [sdk3 removeGroupMembersWithGroupId:groupId membersToRemove:[NSArray arrayWithObjects:user1AccountInfo.userId, user3AccountInfo.userId, nil] error:&error];
+        [sdk3 removeGroupMembersWithGroupId:groupId membersToRemove:[NSArray arrayWithObjects:user1AccountInfo.userId, user3AccountInfo.userId, nil] privateKeys:nil error:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
         // user3 could retrieve the previous encryption session only because "group-1" was set as recipient.
@@ -465,7 +520,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert([es1SDK3FromProxy.retrievalDetails.proxySessionId isEqualToString:proxySession1.sessionId], @"es1SDK3FromProxy.retrievalDetails.proxySessionId incorrect");
 
         // user2 adds user3 as recipient of the encryption session.
-        NSArray<SealdRecipientWithRights*>* recipientsToAdd = [NSArray arrayWithObjects:[[SealdRecipientWithRights alloc] initWithRecipientId:user3AccountInfo.userId rights:allRights], nil];
+        NSArray<SealdRecipientWithRights*>* recipientsToAdd = [NSArray arrayWithObjects:[[SealdRecipientWithRights alloc] initWithRecipientId:user3AccountInfo.userId], nil];
         NSDictionary<NSString*, SealdActionStatus*>* respAdd = [es1SDK2 addRecipients:recipientsToAdd error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(respAdd.count == 1, @"Unexpected response count.");
@@ -522,6 +577,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert(respRevokeAll.recipients[user1AccountInfo.userId].success == YES, @"Unexpected status.");
         NSCAssert(respRevokeAll.proxySessions.count == 0, @"Unexpected response proxies count %lu", (unsigned long)respRevokeAll.proxySessions.count);
 
+        // user1 cannot retrieve anymore
         [sdk1 retrieveEncryptionSessionWithSessionId:es1SDK1.sessionId useCache:NO lookupProxyKey:NO lookupGroupKey:NO error:&error];
         NSCAssert(error != nil, @"expected error");
         NSCAssert([error.userInfo[@"code"] isEqualToString:@"NO_TOKEN_FOR_YOU"], @"invalid error");
@@ -530,15 +586,34 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         error = nil;
 
         // Create additional data for user1
-        NSArray<SealdRecipientWithRights*>* recipientsES2 = [NSArray arrayWithObject:[[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId rights:allRights]];
-        SealdEncryptionSession* es2SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipientsES2 useCache:YES error:&error];
+        NSArray<SealdRecipientWithRights*>* recipientsES234 = [NSArray arrayWithObject:[[SealdRecipientWithRights alloc] initWithRecipientId:user1AccountInfo.userId]];
+        SealdEncryptionSession* es2SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipientsES234 useCache:YES error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSString* anotherMessage = @"Nobody should read that!";
         NSString* secondEncryptedMessage = [es2SDK1 encryptMessage:anotherMessage error:&error];
         NSCAssert(error == nil, error.localizedDescription);
+        SealdEncryptionSession* es3SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipientsES234 useCache:YES error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+        SealdEncryptionSession* es4SDK1 = [sdk1 createEncryptionSessionWithRecipients:recipientsES234 useCache:YES error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+
+        // user1 can retrieveMultiple
+        NSArray<SealdEncryptionSession*>* encryptionSessions = [sdk1 retrieveMultipleEncryptionSessions:[NSArray arrayWithObjects:es2SDK1.sessionId, es3SDK1.sessionId, es4SDK1.sessionId, nil] useCache:YES lookupProxyKey:NO lookupGroupKey:NO error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert([encryptionSessions count] == 3, @"wrong length");
+        NSCAssert(encryptionSessions[0] != nil, @"session is nil");
+        NSCAssert([encryptionSessions[0].sessionId isEqualToString:es2SDK1.sessionId], @"wrong session id");
+        NSCAssert(encryptionSessions[1] != nil, @"session is nil");
+        NSCAssert([encryptionSessions[1].sessionId isEqualToString:es3SDK1.sessionId], @"wrong session id");
+        NSCAssert(encryptionSessions[2] != nil, @"session is nil");
+        NSCAssert([encryptionSessions[2].sessionId isEqualToString:es4SDK1.sessionId], @"wrong session id");
 
         // user1 can renew its key, and still decrypt old messages
-        [sdk1 renewKeysWithExpireAfter:5 * 365 * 24 * 60 * 60 error:&error];
+        NSData* preparedRenewal = [sdk1 prepareRenewWithPrivateKeys:nil error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+        // `preparedRenewal` Can be stored on SSKS as a new identity. That way, a backup will be available is the renewKeys fail.
+
+        [sdk1 renewKeysWithPreparedRenewal:preparedRenewal privateKeys:nil expireAfter:5 * 365 * 24 * 60 * 60 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         SealdEncryptionSession* es2SDK1AfterRenew = [sdk1 retrieveEncryptionSessionFromMessage:secondEncryptedMessage useCache:YES lookupProxyKey:NO lookupGroupKey:NO error:&error];
         NSCAssert(error == nil, error.localizedDescription);
@@ -602,7 +677,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert(error == nil, error.localizedDescription);
 
         // We can instantiate a new SealdSDK, import the exported identity
-        SealdSdk* sdk1Exported = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId dbPath:[NSString stringWithFormat:@"%@/inst1Exported", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"User1Exported" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
+        SealdSdk* sdk1Exported = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId databasePath:[NSString stringWithFormat:@"%@/inst1Exported", sealdDir] databaseEncryptionKey:databaseEncryptionKey instanceName:@"User1Exported" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         [sdk1Exported importIdentity:exportedIdentity error:&error];
         NSCAssert(error == nil, error.localizedDescription);
@@ -616,7 +691,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert([clearMessageExportedIdentity isEqualToString:anotherMessage], @"clearMessageExportedIdentity incorrect");
 
         // user1 can create sub identity
-        SealdCreateSubIdentityResponse* subIdentity = [sdk1 createSubIdentityWithDeviceName:@"Sub-device" expireAfter:365 * 24 * 60 * 60 error:&error];
+        SealdCreateSubIdentityResponse* subIdentity = [sdk1 createSubIdentityWithDeviceName:@"Sub-device" privateKeys:nil expireAfter:365 * 24 * 60 * 60 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert(subIdentity.deviceId != nil, @"subIdentity.deviceId invalid");
 
@@ -626,7 +701,7 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert(error == nil, error.localizedDescription);
 
         // We can instantiate a new SealdSDK, import the sub-device identity
-        SealdSdk* sdk1SubDevice = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId dbPath:[NSString stringWithFormat:@"%@/inst1SubDevice", sealdDir] dbb64SymKey:databaseEncryptionKeyB64 instanceName:@"User1SubDevice" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
+        SealdSdk* sdk1SubDevice = [[SealdSdk alloc] initWithApiUrl:sealdCredentials.apiURL appId:sealdCredentials.appId databasePath:[NSString stringWithFormat:@"%@/inst1SubDevice", sealdDir] databaseEncryptionKey:databaseEncryptionKey instanceName:@"User1SubDevice" logLevel:0 logNoColor:true encryptionSessionCacheTTL:0 keySize:4096 error:&error];
         NSCAssert(error == nil, error.localizedDescription);
         [sdk1SubDevice importIdentity:subIdentity.backupKey error:&error];
         NSCAssert(error == nil, error.localizedDescription);
@@ -638,7 +713,27 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
         NSCAssert(error == nil, error.localizedDescription);
         NSCAssert([clearMessageSubdIdentity isEqualToString:anotherMessage], @"clearMessageSubdIdentity invalid");
 
-        // users can send heartbeat
+        // Get and Check sigchain hash
+        SealdGetSigchainResponse* user1LastSigchainHash = [sdk1 getSigchainHashWithUserId:user1AccountInfo.userId position:-1 error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert(user1LastSigchainHash.position == 2, @"user1LastSigchainHash unexpected position");
+        SealdGetSigchainResponse* user1FirstSigchainHash = [sdk1 getSigchainHashWithUserId:user1AccountInfo.userId position:0 error:&error];
+        NSCAssert(error == nil, error.localizedDescription);
+        NSCAssert(user1FirstSigchainHash.position == 0, @"user1FirstSigchainHash unexpected position");
+        SealdCheckSigchainResponse* lastHashCheck = [sdk2 checkSigchainHashWithUserId:user1AccountInfo.userId expectedHash:user1LastSigchainHash.sigchainHash position:-1 error:&error];
+        NSCAssert(lastHashCheck.found, @"lastHashCheck not found");
+        NSCAssert(lastHashCheck.position == 2, @"lastHashCheck unexpected position");
+        NSCAssert(lastHashCheck.lastPosition == 2, @"lastHashCheck unexpected lastPosition");
+        SealdCheckSigchainResponse* firstHashCheck = [sdk1 checkSigchainHashWithUserId:user1AccountInfo.userId expectedHash:user1FirstSigchainHash.sigchainHash position:-1 error:&error];
+        NSCAssert(firstHashCheck.found, @"firstHashCheck not found");
+        NSCAssert(firstHashCheck.position == 0, @"firstHashCheck unexpected position");
+        NSCAssert(firstHashCheck.lastPosition == 2, @"firstHashCheck unexpected lastPosition");
+        SealdCheckSigchainResponse* badPositionCheck = [sdk2 checkSigchainHashWithUserId:user1AccountInfo.userId expectedHash:user1FirstSigchainHash.sigchainHash position:1 error:&error];
+        NSCAssert(badPositionCheck.found == false, @"badPositionCheck unexpected found");
+        // For badPositionCheck, position cannot be asserted as it is not set when the hash is not found.
+        NSCAssert(badPositionCheck.lastPosition == 2, @"badPositionCheck unexpected lastPosition");
+
+        // Heartbeat can be used to check if proxies and firewalls are configured properly so that the app can reach Seald's servers.
         [sdk1 heartbeatWithError:&error];
         NSCAssert(error == nil, error.localizedDescription);
 
@@ -669,14 +764,15 @@ BOOL testSealdSDKWithCredentials(const NSString* sealdDir)
     self.testSsksPasswordLabel = @"pending...";
     self.testSsksTmrLabel = @"pending...";
 
-    // Find database Path
+    // The SealdSDK uses a local database. This database should be written to a permanent directory.
+    // On iOS, in ObjC, the recommended path is `NSDocumentDirectory`.
     NSArray* paths = NSSearchPathForDirectoriesInDomains
                          (NSDocumentDirectory, NSUserDomainMask, YES);
     NSString* documentsDirectory = [paths objectAtIndex:0];
     NSString* sealdDir = [NSString stringWithFormat:@"%@/seald", documentsDirectory];
 
-    // Delete local database from previous run
-    NSLog(@"Deleting local database from previous run...");
+    // This demo expects a clean database path to create it's own data, so we need to clean what previous runs left.
+    // In a real app, it should never be done.
     NSFileManager* fileManager = [NSFileManager defaultManager];
     NSError* error = nil;
     if ([fileManager removeItemAtPath:sealdDir error:&error]) {
