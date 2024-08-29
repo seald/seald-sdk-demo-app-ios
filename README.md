@@ -8,10 +8,11 @@ The main file you could be interested in reading is [`./SealdSDK/SEALDSDKAppDele
 
 Before running the app, you have to install the Cocoapods, with the command `pod install`.
 
-Also, it is recommended to create your own Seald team on <https://www.seald.io/create-sdk>,
-and change the values of `appId`, `JWTSharedSecretId`, and `JWTSharedSecret`, that you can get on the `SDK` tab
-of the Seald dashboard settings, as well as `ssksBackendAppKey` that you can get on the `SSKS` tab,
-in `./SealdSDK/credentials.m`,
-so that the example runs in your own Seald team.
+Also, to run the example app, you must copy `./SealdSDK/credentials.m_template` to `./SealdSDK/credentials.m`, and set
+the values of `apiURL`, `appId`, `JWTSharedSecretId`, `JWTSharedSecret`, `ssksURL` and `ssksBackendAppKey`.
+
+To get these values, you must create your own Seald team on <https://www.seald.io/create-sdk>. Then, you can get the
+values of `apiURL`, `appId`, `JWTSharedSecretId`, and `JWTSharedSecret`, on the `SDK` tab of the Seald dashboard
+settings, and you can get `ssksURL` and `ssksBackendAppKey` on the `SSKS` tab.
 
 Finally, to run the app, open `SealdSDK demo app ios.xcworkspace` in XCode, then run it.
